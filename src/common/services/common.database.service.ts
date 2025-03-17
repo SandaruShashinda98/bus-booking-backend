@@ -1,6 +1,3 @@
-/* This TypeScript code defines an abstract class `CommonDatabaseService<T>` that serves as a common
-base class for database operations on a specific entity type `T`. Here is a breakdown of what the
-code is doing: */
 import {
   FilterQuery,
   Model,
@@ -11,88 +8,46 @@ import {
   PipelineStage,
 } from 'mongoose';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
-import { ILog } from '@interface/activity-log/activity-log';
-import { LOG_ACTIONS } from '@constant/activity-log/activity-log';
 import { IBaseEntity } from '@interface/common/base-entity';
-import { detectModifications } from '@common/helpers/modifications.helper';
 import { paginator, responseOrderMaker } from '@common/helpers/custom.helper';
 import { CommonResponse } from './response.service';
 
 export abstract class CommonDatabaseService<T extends IBaseEntity> {
   constructor(
-    public logsDatabaseService: LogsDatabaseService,
     private readonly mongooseModel: Model<T & Document>,
     private readonly model: DB_COLLECTION_NAMES,
   ) {}
 
   async addNewDocument(
     doc: T,
-    logParams: Partial<ILog> & { changed_by: Types.ObjectId | string },
     populate: string | PopulateOptions | (string | PopulateOptions)[] = [],
   ): Promise<T> {
     const newDoc = await this.mongooseModel.create({
       ...doc,
-      changed_by: doc?.changed_by ?? logParams?.changed_by,
+      changed_by: doc?.changed_by,
     });
 
     newDoc.populate(populate);
     const newDocOnDb: T = newDoc.toObject() as T;
-
-    const newLog: ILog = {
-      action: LOG_ACTIONS.BASIC_ADD_DOCUMENT,
-      changed_by: logParams.changed_by,
-      date: new Date(),
-      schema: this.model,
-      modifications: detectModifications(doc),
-      ...logParams,
-    };
-
-    await this.logsDatabaseService.createLog(newLog);
 
     return newDocOnDb;
   }
 
   async updateDocument(
     doc: T,
-    logParams: Partial<ILog> & { changed_by: Types.ObjectId | string },
     populate: string | PopulateOptions | (string | PopulateOptions)[] = [],
     filter: FilterQuery<T> = { _id: doc._id },
   ): Promise<T> {
-    // default action
-    // this will be overridden by the logParams if it has been passed
-    const action = LOG_ACTIONS.BASIC_UPDATE_DOCUMENT;
-
     // set the last_modified_on with current time
     const newDoc: T = {
       ...doc,
       last_modified_on: new Date(),
-      changed_by: doc?.changed_by ?? logParams?.changed_by,
+      changed_by: doc?.changed_by,
     };
-
-    const oldDocOnDb = await this.mongooseModel.findOne(filter).exec();
 
     const newDocOnDb = await this.mongooseModel
       .findOneAndUpdate(filter, newDoc, { new: true })
       .exec();
-
-    if (oldDocOnDb) {
-      const modifications = detectModifications(
-        newDocOnDb ? newDocOnDb.toObject() : {},
-        oldDocOnDb.toObject(),
-      );
-
-      const newLog: ILog = {
-        action,
-        date: new Date(),
-        schema: this.model,
-        modifications,
-        ...logParams,
-      };
-      await this.logsDatabaseService.createLog(newLog);
-    }
-
-    if (!newDocOnDb) return null;
 
     return (await newDocOnDb.populate(populate)).toObject();
   }
@@ -192,27 +147,12 @@ export abstract class CommonDatabaseService<T extends IBaseEntity> {
   }
 
   // use only for special purposes
-  async hardDelete(
-    id: Types.ObjectId | string,
-    logParams?: Partial<ILog> & { changed_by: Types.ObjectId | string },
-  ): Promise<T | null> {
+  async hardDelete(id: Types.ObjectId | string): Promise<T | null> {
     const doc = (
       await this.mongooseModel.findByIdAndDelete(id)?.exec()
     )?.toObject();
 
     if (!doc) return null;
-
-    if (logParams) {
-      const newLog: ILog = {
-        action: LOG_ACTIONS.BASIC_DELETE_DOCUMENT,
-        changed_by: logParams.changed_by,
-        date: new Date(),
-        schema: this.model,
-        ...logParams,
-        modifications: detectModifications({}, doc),
-      };
-      await this.logsDatabaseService.createLog(newLog);
-    }
 
     return doc as T;
   }

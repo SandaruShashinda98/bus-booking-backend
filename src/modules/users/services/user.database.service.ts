@@ -11,7 +11,6 @@ import { IUserModel } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { AuthService } from '@module/authentication/services/auth.service';
 import { RolesDatabaseService } from '@module/roles/services/roles.database.service';
 import { SYSTEM_CHANGES } from '@constant/common/system-changes';
@@ -29,10 +28,9 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
     private readonly rolesService: RolesService,
     @InjectModel(DB_COLLECTION_NAMES.USERS)
     private readonly userModel: Model<IUserModel>,
-    logsDatabaseService: LogsDatabaseService,
     private readonly authService: AuthService,
   ) {
-    super(logsDatabaseService, userModel, DB_COLLECTION_NAMES.USERS);
+    super(userModel, DB_COLLECTION_NAMES.USERS);
   }
 
   //TODO : @Sandaru - REMOVE THIS AFTER DEV PROCESS

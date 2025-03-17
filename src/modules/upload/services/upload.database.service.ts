@@ -1,6 +1,5 @@
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
 import { FilterQuery, Model, PipelineStage, Types } from 'mongoose';
@@ -14,9 +13,8 @@ export class UploadDatabaseService extends CommonDatabaseService<IUpload> {
   constructor(
     @InjectModel(DB_COLLECTION_NAMES.UPLOAD)
     private readonly uploadModel: Model<IUploadModel>,
-    logsDatabaseService: LogsDatabaseService,
   ) {
-    super(logsDatabaseService, uploadModel, DB_COLLECTION_NAMES.UPLOAD);
+    super(uploadModel, DB_COLLECTION_NAMES.UPLOAD);
   }
 
   async filterUploadsWithPagination(

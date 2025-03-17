@@ -12,9 +12,7 @@ import { IpACLDatabaseService } from './services/ip-acl.database.service';
 import { SIpACLSchema } from './schemas/ip-acl.schema';
 import { IpACLController } from './controllers/ip-acl.controller';
 import { TrunksService } from './services/trunks.service';
-import { TrunksDatabaseService } from './services/trunks.database.service';
 import { TrunksSchema } from './schemas/trunks.schema';
-import { TrunksController } from './controllers/trunks.controller';
 
 const services = [
   SettingsService,
@@ -22,7 +20,6 @@ const services = [
   ObjectListsDatabaseService,
   IpACLDatabaseService,
   TrunksService,
-  TrunksDatabaseService,
 ];
 @Global()
 @Module({
@@ -40,17 +37,12 @@ const services = [
         name: DB_COLLECTION_NAMES.IP_ACL,
         schema: SIpACLSchema,
       },
-      {
-        name: DB_COLLECTION_NAMES.TRUNKS,
-        schema: TrunksSchema,
-      },
     ]),
   ],
   controllers: [
     GeneralSettingsController,
     ObjectListController,
     IpACLController,
-    TrunksController,
   ],
   providers: services,
   exports: services,
