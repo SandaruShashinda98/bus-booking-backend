@@ -1,0 +1,3 @@
+export enum ACTIVITY_TYPES {
+    LOGIN_SUMMARY = 'LOGIN_SUMMARY',
+}

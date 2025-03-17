@@ -1,0 +1,95 @@
+//TODO set suitable call statuses accordingly
+export enum SYSTEM_STATUS {
+  INITIAL = 1,
+  //idle and waiting
+  IDLE = 180,
+  WAITING = 180,
+  //ringing
+  RINGING = 180,
+  //call answered
+  CALL_ANSWERED = 200,
+  //call terminated by system
+  CALL_TERMINATED_BY_SYSTEM = 487,
+  //busy
+  BUSY = 486,
+  //no answer
+  NO_ANSWER = 480,
+  //unreachable
+  UNREACHABLE = 503,
+  //call rejected
+  CALL_REJECTED = 603,
+  //invalid number
+  INVALID_NUMBER = 404,
+  //voicemail and IVR
+  VOICEMAIL = 200,
+  IVR = 200,
+  //call timeout
+  CALL_TIMEOUT = 408,
+  //call forwarded
+  CALL_FORWARDED = 301,
+  //Error call setup failure
+  ERROR = 500,
+  // Call Dropped or disconnected,
+
+  REQUEST_TERMINATED = 487,
+  SERVICE_UNAVAILABLE = 503,
+}
+
+export const SYSTEM_ANSWERED_STATUSES = [
+  SYSTEM_STATUS.CALL_ANSWERED,
+  SYSTEM_STATUS.REQUEST_TERMINATED,
+  SYSTEM_STATUS.SERVICE_UNAVAILABLE,
+];
+
+export enum HANGUP_DISPOSITION {
+  NORMAL = 1,
+  CUSTOMER_HANGUP = 2,
+  AGENT_HANGUP = 3,
+  NETWORK_FAILURE = 4,
+}
+
+export enum FEEDBACK_STATUS {
+  DEPOSIT = 1,
+  CONTACTED = 2,
+  INTERESTED = 3,
+  NOT_INTERESTED_UNDER_8_MIN = 4,
+  APPOINTMENT_SCHEDULED = 5,
+  LANGUAGE_BARRIER = 6,
+  VOICEMAIL = 7,
+  LEFT_MESSAGE = 8,
+  CALLBACK_SCHEDULED = 9,
+  NO_ANSWER = 10,
+  BUSY = 11,
+  DO_NOT_CALL = 12,
+  DISCONNECTED_OR_INVALID_NUMBER = 13,
+  CALL_BLOCKED = 14,
+  NOT_INTERESTED = 15,
+  REFUSED = 16,
+  FAX_OR_VOICEMAIL_MACHINE = 17,
+  WRONG_NUMBER = 18,
+  INVALID_LEAD = 19,
+  DUPLICATE_LEAD = 20,
+  TRANSFERRED = 21,
+  PENDING = 22,
+}
+
+export enum OBJECT_TYPE_ID {
+  PREDICTIVE_CALLS = 1,
+  SCHEDULED_CALLS = 2,
+  MANUAL_CALLS = 3,
+}
+
+export const CALL_STATUS_MAP: Record<number, string> = {
+  0: 'INITIAL',
+  180: 'IDLE / WAITING / RINGING',
+  200: 'CALL ANSWERED / VOICEMAIL / IVR',
+  301: 'CALL FORWARDED',
+  404: 'INVALID NUMBER',
+  408: 'CALL TIMEOUT',
+  480: 'NO_ANSWER',
+  486: 'BUSY',
+  487: 'CALL TERMINATED BY SYSTEM / REQUEST TERMINATED',
+  500: 'ERROR',
+  503: 'UNREACHABLE / SERVICE UNAVAILABLE',
+  603: 'CALL REJECTED',
+};

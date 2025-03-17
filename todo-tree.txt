@@ -1,0 +1,7 @@
+NOTE: This is common todo tree for the backend, need to remove this file before UAT/PROD
+
+TODO: check update desk endpoint
+TODO: check update skill group endpoint
+TODO: Add custom logs
+TODO: Add dynamic Roles and Permissions
+TODO: Refactor response dto

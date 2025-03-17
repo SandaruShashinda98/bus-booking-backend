@@ -1,0 +1,6 @@
+export enum TRUNK_STATE {
+  PRIMARY = 'PRIMARY',
+  BACKUP = 'BACKUP',
+  FAILOVER = 'FAILOVER',
+  DISABLED = 'DISABLED',
+}

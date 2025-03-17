@@ -1,0 +1,9 @@
+import { MONGO_CONFIG_KEYS } from '@constant/common/mongo-config-keys';
+
+export default () => ({
+  [MONGO_CONFIG_KEYS.MONGODB_USERNAME]: process.env.MONGODB_USERNAME,
+  [MONGO_CONFIG_KEYS.MONGODB_PASSWORD]: process.env.MONGODB_PASSWORD,
+  [MONGO_CONFIG_KEYS.MONGODB_HOST]: process.env.MONGODB_HOST,
+  [MONGO_CONFIG_KEYS.MONGODB_PORT]: process.env.MONGODB_PORT,
+  [MONGO_CONFIG_KEYS.MONGODB_DATABASE]: process.env.MONGODB_DATABASE,
+});

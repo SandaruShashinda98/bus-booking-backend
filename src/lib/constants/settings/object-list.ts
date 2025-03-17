@@ -1,0 +1,5 @@
+export enum LIST_TYPE {
+  CUSTOM = 'CUSTOM',
+  COUNTRIES = 'COUNTRIES',
+  LEADS = 'LEADS',
+}
