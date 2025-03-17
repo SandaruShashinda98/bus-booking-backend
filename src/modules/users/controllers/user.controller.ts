@@ -188,13 +188,6 @@ export class UserController {
     if (!userData)
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
-    // UPCOMING
-    // add user to desks and skill groups
-    // await this.usersService.addUserToDesksAndSkillGroups(
-    //   createUserDto,
-    //   userData._id,
-    // );
-
     return { data: userData };
   }
 
@@ -229,12 +222,6 @@ export class UserController {
 
     if (!updatedUser)
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
-
-    // UPCOMING
-    // delete desks and skill groups from the delete user
-    // if (updateUserDto.is_delete) {
-    //   await this.userGroupService.removeUserFromAllGroups(foundUser._id);
-    // }
 
     return { data: updatedUser };
   }

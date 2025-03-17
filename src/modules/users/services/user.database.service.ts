@@ -90,68 +90,12 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
     skip: number = 0,
     limit: number = 10,
   ) {
-    const {
-      filterCriteria,
-      // UPCOMING
-      // deskIdsArray = [],
-      // skillGroupsIdsArray = [],
-      // groupsIdsArray = [],
-    } = filters;
-    // UPCOMING
-    // const groupIds = [
-    //   ...deskIdsArray,
-    //   ...skillGroupsIdsArray,
-    //   ...groupsIdsArray,
-    // ];
+    const { filterCriteria } = filters;
 
     const aggregationPipeline: PipelineStage[] = [
       { $match: filterCriteria },
 
       { $sort: { created_on: -1 } },
-      // UPCOMING
-      // {
-      //   $lookup: {
-      //     from: DB_COLLECTION_NAMES.USER_GROUPS,
-      //     let: { userId: '$_id' },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ['$user_id', '$$userId'] },
-      //               ...(groupIds.length > 0
-      //                 ? [{ $in: ['$group_id', groupIds] }]
-      //                 : []),
-      //             ],
-      //           },
-      //         },
-      //       },
-      //       {
-      //         $project: {
-      //           id: '$_id',
-      //           group_id: 1,
-      //           group_type: 1,
-      //           _id: 0,
-      //         },
-      //       },
-      //     ],
-      //     as: 'allGroups',
-      //   },
-      // },
-
-      // UPCOMING
-      // Apply group filters if any groups are specified
-      // ...(groupIds.length > 0
-      //   ? [
-      //       {
-      //         $match: {
-      //           'allGroups.0': { $exists: true },
-      //         },
-      //       },
-      //     ]
-      //   : []),
-
-      // Project the final format with separated group types
       {
         $project: {
           _id: 1,
@@ -169,48 +113,6 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
           devices: 1,
           is_active: 1,
           role: 1,
-          // UPCOMING
-          // desks: {
-          //   $map: {
-          //     input: {
-          //       $filter: {
-          //         input: '$allGroups',
-          //         as: 'group',
-          //         cond: { $eq: ['$$group.group_type', USER_GROUP_TYPE.DESK] },
-          //       },
-          //     },
-          //     as: 'deskGroup',
-          //     in: '$$deskGroup.group_id',
-          //   },
-          // },
-          // skill_groups: {
-          //   $map: {
-          //     input: {
-          //       $filter: {
-          //         input: '$allGroups',
-          //         as: 'group',
-          //         cond: {
-          //           $eq: ['$$group.group_type', USER_GROUP_TYPE.SKILL_GROUP],
-          //         },
-          //       },
-          //     },
-          //     as: 'skillGroup',
-          //     in: '$$skillGroup.group_id',
-          //   },
-          // },
-          // groups: {
-          //   $map: {
-          //     input: {
-          //       $filter: {
-          //         input: '$allGroups',
-          //         as: 'group',
-          //         cond: { $eq: ['$$group.group_type', USER_GROUP_TYPE.GROUP] },
-          //       },
-          //     },
-          //     as: 'generalGroup',
-          //     in: '$$generalGroup.group_id',
-          //   },
-          // },
           last_login: 1,
         },
       },
@@ -242,57 +144,6 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
           _id: new Types.ObjectId(userId),
         },
       },
-      // UPCOMING
-      // {
-      //   $lookup: {
-      //     from: DB_COLLECTION_NAMES.USER_GROUPS,
-      //     let: { userId: '$_id' },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ['$user_id', '$$userId'] },
-      //               { $eq: ['$group_type', USER_GROUP_TYPE.DESK] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //       {
-      //         $project: {
-      //           _id: 0,
-      //           group_id: 1,
-      //         },
-      //       },
-      //     ],
-      //     as: 'desks',
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: DB_COLLECTION_NAMES.USER_GROUPS,
-      //     let: { userId: '$_id' },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ['$user_id', '$$userId'] },
-      //               { $eq: ['$group_type', USER_GROUP_TYPE.SKILL_GROUP] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //       {
-      //         $project: {
-      //           _id: 0,
-      //           group_id: 1,
-      //         },
-      //       },
-      //     ],
-      //     as: 'skill_groups',
-      //   },
-      // },
       {
         $project: {
           _id: 1,
@@ -310,9 +161,6 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
           max_concurrent_sessions: 1,
           devices: 1,
           roles: '$role',
-          // UPCOMING
-          // desks: '$desks.group_id',
-          // skill_groups: '$skill_groups.group_id',
         },
       },
     ];
