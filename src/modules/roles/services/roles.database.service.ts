@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, PipelineStage, Types } from 'mongoose';
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { ILoggedUser } from '@interface/authorization/user';
 import { IRole } from '@interface/authorization/roles';
 import { IRoleModel } from '../schemas/roles.schema';
@@ -20,9 +19,8 @@ export class RolesDatabaseService extends CommonDatabaseService<IRole> {
   constructor(
     @InjectModel(DB_COLLECTION_NAMES.ROLES)
     private readonly roleModel: Model<IRoleModel>,
-    logsDatabaseService: LogsDatabaseService,
   ) {
-    super(logsDatabaseService, roleModel, DB_COLLECTION_NAMES.ROLES);
+    super(roleModel, DB_COLLECTION_NAMES.ROLES);
   }
 
   /**

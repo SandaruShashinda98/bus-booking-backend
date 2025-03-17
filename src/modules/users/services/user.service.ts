@@ -1,64 +1,20 @@
 import {
   DataToCheckDto,
-  FilterUserMiscDataDto,
   FilterUsersDto,
   FilterUsersMetaDataDto,
 } from '@dto/authorization/user-query-param.dto';
-import { CreateUserDTO } from '@dto/authorization/user-request.dto';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FilterQuery, Types } from 'mongoose';
 import { UsersDatabaseService } from './user.database.service';
 import { IUser } from '@interface/authorization/user';
-import { ACTIVE_STATE, MISC_TYPE } from '@constant/authorization/user';
+import { ACTIVE_STATE } from '@constant/authorization/user';
 import { DeleteRoleDTO } from '@dto/authorization/role-request.dto';
 import { IRole } from '@interface/authorization/roles';
-import { DesksDatabaseService } from '@module/groups/services/desk.database.service';
-import { SkillGroupsDatabaseService } from '@module/groups/services/skill-group.database.service';
 import { filterByName } from '@common/helpers/filter.helper';
-import { UserGroupService } from '@module/groups/services/user-group.service';
-import { USER_GROUP_TYPE } from '@constant/groups/groups';
-import { GroupDatabaseService } from '@module/groups/services/group.database.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersDatabaseService: UsersDatabaseService,
-    private readonly userGroupService: UserGroupService,
-    private readonly desksDatabaseService: DesksDatabaseService,
-    private readonly skillGroupsDatabaseService: SkillGroupsDatabaseService,
-    private readonly groupDatabaseService: GroupDatabaseService,
-  ) {}
-
-  /**
-   * This function adds a user to all desks and skill groups based on the provided parameters.
-   */
-  async addUserToDesksAndSkillGroups(
-    body: CreateUserDTO,
-    user_id: Types.ObjectId,
-  ) {
-    try {
-      // desks could be an array of desk ids or an array of desk names
-      if (!body.add_to_currant_and_future_desks)
-        await this.userGroupService.filterAndChangeUserGroups(
-          user_id,
-          body.desks,
-          USER_GROUP_TYPE.DESK,
-        );
-
-      // skill_groups could be an array of skill group ids or an array of skill group names
-      if (!body.add_to_currant_and_future_skill_groups)
-        await this.userGroupService.filterAndChangeUserGroups(
-          user_id,
-          body.skill_groups,
-          USER_GROUP_TYPE.SKILL_GROUP,
-        );
-    } catch (err) {
-      new Logger().debug(
-        `user.service.ts -> addUserToDesksAndSkillGroups -> ${err}`,
-        'DEBUG',
-      );
-    }
-  }
+  constructor(private readonly usersDatabaseService: UsersDatabaseService) {}
 
   /**
    * The function `getUserFilters` takes user filter parameters and constructs a MongoDB filter criteria
@@ -175,36 +131,6 @@ export class UsersService {
       skillGroupsIdsArray,
       groupsIdsArray,
     };
-  }
-
-  /*
-   * The `getUserRelatedData` function in the `UsersService` class is a method that fetches related data
-   * for a user based on the provided `IUser` object and the `MISC_TYPE` enum.
-   */
-  async getUserRelatedData(userId: string, queryParams: FilterUserMiscDataDto) {
-    if (queryParams.type === MISC_TYPE.DESK) {
-      return await this.desksDatabaseService.getUserDesks(
-        userId,
-        queryParams.searchKey,
-      );
-    } else if (queryParams.type === MISC_TYPE.SKILL_GROUP) {
-      return await this.skillGroupsDatabaseService.getUserSkillGroups(
-        userId,
-        queryParams.searchKey,
-      );
-    } else if (queryParams.type === MISC_TYPE.GROUP) {
-      return await this.groupDatabaseService.getUserGroups(
-        userId,
-        queryParams.searchKey,
-      );
-    } else if (queryParams.type === MISC_TYPE.ROLE) {
-      return await this.usersDatabaseService.getRolesByUserId(
-        userId,
-        queryParams.searchKey,
-        queryParams.start,
-        queryParams.size,
-      );
-    } else return null;
   }
 
   /**

@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, PipelineStage, Types } from 'mongoose';
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { ILoggedUser } from '@interface/authorization/user';
 import { IObjectList } from '@interface/settings/object-list';
 import { IObjectListModel } from '../schemas/object-list.schema';
@@ -15,13 +14,8 @@ export class ObjectListsDatabaseService extends CommonDatabaseService<IObjectLis
   constructor(
     @InjectModel(DB_COLLECTION_NAMES.OBJECT_LISTS)
     readonly objectListModel: Model<IObjectListModel>,
-    logsDatabaseService: LogsDatabaseService,
   ) {
-    super(
-      logsDatabaseService,
-      objectListModel,
-      DB_COLLECTION_NAMES.OBJECT_LISTS,
-    );
+    super(objectListModel, DB_COLLECTION_NAMES.OBJECT_LISTS);
   }
 
   /**

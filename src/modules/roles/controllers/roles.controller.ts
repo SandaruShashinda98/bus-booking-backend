@@ -174,24 +174,16 @@ export class RolesController {
     @LoggedUser() loggedUser: ILoggedUser,
   ) {
     const foundDuplicates = await this.rolesDatabaseService.findDocument({
-      role: { $regex: `^${createRoleDto.role.trim()}$`, $options: "i" },
+      role: { $regex: `^${createRoleDto.role.trim()}$`, $options: 'i' },
       is_delete: false,
     });
 
     if (foundDuplicates)
       throw new DuplicateException([RESPONSE_MESSAGES.DUPLICATE_ROLE]);
 
-    //remove empty ip strings
-    // if (createRoleDto.accepted_ips?.length > 0)
-    //   createRoleDto.accepted_ips = createRoleDto.accepted_ips.filter(
-    //     (ip) => ip && ip?.trim() !== '',
-    //   );
-
     const roleData: Partial<IRole> = {
       ...createRoleDto,
       is_active: createRoleDto.is_active ?? true,
-      // UPCOMING
-      // is_phone_masked: createRoleDto.is_phone_masked ?? false,
       is_clone: createRoleDto.is_clone ?? false,
     };
 
@@ -216,7 +208,6 @@ export class RolesController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(
     PERMISSIONS.ADMIN,
-
     PERMISSIONS.SUPPORT,
   )
   @LogRequest('roles -> updateRole')
@@ -227,7 +218,7 @@ export class RolesController {
     @Body() updateRoleDto: UpdateRoleDTO,
   ) {
     const foundDuplicates = await this.rolesDatabaseService.findDocument({
-      role: { $regex: `^${updateRoleDto.role.trim()}$`, $options: "i" },
+      role: { $regex: `^${updateRoleDto.role.trim()}$`, $options: 'i' },
       _id: { $ne: new Types.ObjectId(pathParams.id) },
       is_delete: false,
     });

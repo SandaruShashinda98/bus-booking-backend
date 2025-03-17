@@ -14,7 +14,6 @@ import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { IUserModel } from '@module/users/schemas/user.schema';
 import { CommonDatabaseService } from '@common/services/common.database.service';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { RESPONSE_MESSAGES } from '@constant/common/responses';
 
 @Injectable()
@@ -26,15 +25,10 @@ export class AuthCommonService extends CommonDatabaseService<IAuthCredentials> {
     @InjectModel(DB_COLLECTION_NAMES.USERS)
     private readonly userModel: Model<IUserModel>,
 
-    logsDatabaseService: LogsDatabaseService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
-    super(
-      logsDatabaseService,
-      authCredentialsModel,
-      DB_COLLECTION_NAMES.AUTH_CREDENTIALS,
-    );
+    super(authCredentialsModel, DB_COLLECTION_NAMES.AUTH_CREDENTIALS);
   }
 
   // validate user credentials and expire token time and returns IAuthCredentials without password

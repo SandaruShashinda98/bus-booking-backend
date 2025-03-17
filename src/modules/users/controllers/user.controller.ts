@@ -29,7 +29,6 @@ import {
 } from '@dto/authorization/user-response.dto';
 import {
   DataToCheckDto,
-  FilterUserMiscDataDto,
   FilterUsersDto,
   FilterUsersMetaDataDto,
 } from '@dto/authorization/user-query-param.dto';
@@ -40,7 +39,6 @@ import { LoggedUser } from '@common/decorators/logged-user.decorator';
 import { PermissionGuard } from '@common/guards/permission.guard';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { PERMISSIONS } from '@constant/authorization/roles';
-import { CommonSearchResponseDTO } from '@common/dto/common-fields.dto';
 import { LogRequest } from '@common/decorators/log-request-response.decorator';
 import { VERSION_NUMBER } from '@constant/common/release-info';
 import { UserCreateService } from '../services/user-creation.service';
@@ -125,25 +123,6 @@ export class UserController {
     };
   }
 
-  @ApiOperation({
-    summary: 'Get user relates misc data, ex: desks, skill-groups',
-  })
-  @ApiResponse({ type: CommonSearchResponseDTO })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
-  @Get('user-data/:id')
-  async getUserRelatedOtherData(
-    @Param() pathParams: ObjectIDPathDTO,
-    @Query() queryParams: FilterUserMiscDataDto,
-  ) {
-    const foundData = await this.usersService.getUserRelatedData(
-      pathParams.id,
-      queryParams,
-    );
-
-    return { data: foundData };
-  }
-
   @ApiOperation({ summary: 'Get all users with filters and pagination' })
   @ApiResponse({ type: UserMetaDataResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -209,13 +188,6 @@ export class UserController {
     if (!userData)
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
-    // UPCOMING
-    // add user to desks and skill groups
-    // await this.usersService.addUserToDesksAndSkillGroups(
-    //   createUserDto,
-    //   userData._id,
-    // );
-
     return { data: userData };
   }
 
@@ -251,12 +223,6 @@ export class UserController {
     if (!updatedUser)
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
-    // UPCOMING
-    // delete desks and skill groups from the delete user
-    // if (updateUserDto.is_delete) {
-    //   await this.userGroupService.removeUserFromAllGroups(foundUser._id);
-    // }
-
     return { data: updatedUser };
   }
 
@@ -277,7 +243,6 @@ export class UserController {
       status: userStatus.status,
       status_changed_at: new Date(),
     });
-
 
     this.webSocketGateway.emitUpdatedUserList(1, 10);
 

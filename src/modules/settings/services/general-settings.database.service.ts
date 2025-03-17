@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { ILoggedUser } from '@interface/authorization/user';
 import { ISettingsModel } from '../schemas/settings.schema';
 import { ISettings } from '@interface/settings/general-settings';
@@ -13,9 +12,8 @@ export class GeneralSettingsDatabaseService extends CommonDatabaseService<ISetti
   constructor(
     @InjectModel(DB_COLLECTION_NAMES.SETTINGS)
     private readonly settingsModel: Model<ISettingsModel>,
-    logsDatabaseService: LogsDatabaseService,
   ) {
-    super(logsDatabaseService, settingsModel, DB_COLLECTION_NAMES.SETTINGS);
+    super(settingsModel, DB_COLLECTION_NAMES.SETTINGS);
   }
 
   /**

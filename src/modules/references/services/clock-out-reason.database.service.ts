@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { ILoggedUser } from '@interface/authorization/user';
 import { IClockOutReason } from '@interface/references/reference';
 import { IClockOutReasonModel } from '../schemas/clock-out-reason.schema';
@@ -13,13 +12,8 @@ export class ClockOutReasonDatabaseService extends CommonDatabaseService<IClockO
   constructor(
     @InjectModel(DB_COLLECTION_NAMES.CLOCK_OUT_REASONS)
     readonly clockOutReasonModel: Model<IClockOutReasonModel>,
-    logsDatabaseService: LogsDatabaseService,
   ) {
-    super(
-      logsDatabaseService,
-      clockOutReasonModel,
-      DB_COLLECTION_NAMES.CLOCK_OUT_REASONS,
-    );
+    super(clockOutReasonModel, DB_COLLECTION_NAMES.CLOCK_OUT_REASONS);
   }
 
   /**

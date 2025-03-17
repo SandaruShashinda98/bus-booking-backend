@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CommonDatabaseService } from '@common/services/common.database.service';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
-import { LogsDatabaseService } from '@module/activity-logs/services/logs.database.service';
 import { ILoggedUser } from '@interface/authorization/user';
 import { IIpACL } from '@interface/settings/general-settings';
 import { IIpACLModel } from '../schemas/ip-acl.schema';
@@ -13,9 +12,8 @@ export class IpACLDatabaseService extends CommonDatabaseService<IIpACL> {
   constructor(
     @InjectModel(DB_COLLECTION_NAMES.IP_ACL)
     readonly ipACLModel: Model<IIpACLModel>,
-    logsDatabaseService: LogsDatabaseService,
   ) {
-    super(logsDatabaseService, ipACLModel, DB_COLLECTION_NAMES.IP_ACL);
+    super(ipACLModel, DB_COLLECTION_NAMES.IP_ACL);
   }
 
   /**
