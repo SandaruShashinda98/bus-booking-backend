@@ -11,15 +11,12 @@ import { ObjectListsDatabaseService } from './services/object-list.database.serv
 import { IpACLDatabaseService } from './services/ip-acl.database.service';
 import { SIpACLSchema } from './schemas/ip-acl.schema';
 import { IpACLController } from './controllers/ip-acl.controller';
-import { TrunksService } from './services/trunks.service';
-import { TrunksSchema } from './schemas/trunks.schema';
 
 const services = [
   SettingsService,
   GeneralSettingsDatabaseService,
   ObjectListsDatabaseService,
   IpACLDatabaseService,
-  TrunksService,
 ];
 @Global()
 @Module({

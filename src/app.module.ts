@@ -15,6 +15,7 @@ import { UploadModule } from '@module/upload/upload.module';
 import { SettingsModule } from '@module/settings/settings.module';
 import { ReferenceModule } from '@module/references/reference.module';
 import { WebSocketModule } from './websocket/websocket.module';
+import { BookingModule } from '@module/bookings/bookings.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { WebSocketModule } from './websocket/websocket.module';
     ReferenceModule,
     UploadModule,
     WebSocketModule,
+    BookingModule,
   ],
   providers: [AppInitService],
 })
