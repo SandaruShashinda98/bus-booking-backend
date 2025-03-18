@@ -42,7 +42,7 @@ import { PERMISSIONS } from '@constant/authorization/roles';
 import { LogRequest } from '@common/decorators/log-request-response.decorator';
 import { VERSION_NUMBER } from '@constant/common/release-info';
 import { UserCreateService } from '../services/user-creation.service';
-import { EventsGateway } from 'src/websocket/websocket.gateway';
+// import { EventsGateway } from 'src/websocket/websocket.gateway';
 @ApiTags('users')
 @Controller({ path: 'users' })
 export class UserController {
@@ -50,7 +50,7 @@ export class UserController {
     private readonly usersDatabaseService: UsersDatabaseService,
     private readonly usersService: UsersService,
     private readonly userCreateService: UserCreateService,
-    private readonly webSocketGateway: EventsGateway,
+    // private readonly webSocketGateway: EventsGateway,
   ) {}
 
   @ApiOperation({ summary: 'Get all users with filters and pagination' })
@@ -244,7 +244,7 @@ export class UserController {
       status_changed_at: new Date(),
     });
 
-    this.webSocketGateway.emitUpdatedUserList(1, 10);
+    // this.webSocketGateway.emitUpdatedUserList(1, 10);
 
     return { success: true, status: userStatus.status };
   }

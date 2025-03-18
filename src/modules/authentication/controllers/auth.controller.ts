@@ -24,9 +24,8 @@ import { RefreshTokenRequestDto } from '@dto/refresh-token/refresh-token-request
 import { RefreshTokenResponseDto } from '@dto/refresh-token/refresh-token-response.dto';
 import { IAuthCredentials, IUser } from '@interface/authorization/user';
 import { AuthCommonService } from '../services/auth-common.service';
-import { RESET_METHOD } from '@constant/authorization/user';
-import { USER_STATUS } from '@constant/authorization/user';
-import { EventsGateway } from 'src/websocket/websocket.gateway';
+import { RESET_METHOD,USER_STATUS } from '@constant/authorization/user';
+// import { EventsGateway } from 'src/websocket/websocket.gateway';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -35,7 +34,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly authCommonService: AuthCommonService,
     private readonly usersDatabaseService: UsersDatabaseService,
-    private readonly webSocketGateway: EventsGateway,
+    // private readonly webSocketGateway: EventsGateway,
   ) {}
 
   @ApiOperation({ summary: 'Login in to the system' })
@@ -86,7 +85,7 @@ export class AuthController {
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
     // send user login event to the socket
-    this.webSocketGateway.emitUpdatedUserList(1, 10);
+    // this.webSocketGateway.emitUpdatedUserList(1, 10);
 
     return {
       data: {

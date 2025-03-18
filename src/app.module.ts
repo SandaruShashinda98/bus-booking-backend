@@ -16,6 +16,7 @@ import { SettingsModule } from '@module/settings/settings.module';
 import { ReferenceModule } from '@module/references/reference.module';
 import { WebSocketModule } from './websocket/websocket.module';
 import { BookingModule } from '@module/bookings/bookings.module';
+import { BusManagementModule } from '@module/bus-management/bus-management.module';
 
 @Module({
   imports: [
@@ -35,8 +36,9 @@ import { BookingModule } from '@module/bookings/bookings.module';
     SettingsModule,
     ReferenceModule,
     UploadModule,
-    WebSocketModule,
+    // WebSocketModule,
     BookingModule,
+    BusManagementModule
   ],
   providers: [AppInitService],
 })
