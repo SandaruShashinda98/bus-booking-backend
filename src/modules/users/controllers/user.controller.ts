@@ -198,7 +198,7 @@ export class UserController {
   @LogRequest('users -> updateUser')
   @Patch(':id')
   async updateUser(
-    @Body() updateUserDto: UpdateUserDTO,
+    @Body() updateUserDto: any,
     @Param() pathParams: ObjectIDPathDTO,
     @LoggedUser() loggedUser: ILoggedUser,
   ) {
@@ -208,10 +208,10 @@ export class UserController {
       throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
 
     //TODO: this is for temporary(dev) purpose, remove it later
-    if (foundUser.username === 'admin')
-      throw new UnprocessableEntityException([
-        RESPONSE_MESSAGES.FORBIDDEN_RESOURCE,
-      ]);
+    // if (foundUser.username === 'admin')
+    //   throw new UnprocessableEntityException([
+    //     RESPONSE_MESSAGES.FORBIDDEN_RESOURCE,
+    //   ]);
 
     (updateUserDto as unknown as Partial<IUser>).changed_by = loggedUser._id;
 
@@ -224,29 +224,6 @@ export class UserController {
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
     return { data: updatedUser };
-  }
-
-  @ApiOperation({ summary: 'Update agent status' })
-  @ApiResponse({ type: UpdateUserStatusResponseDTO })
-  @UseGuards(JwtAuthGuard)
-  @LogRequest('users -> update agent status')
-  @Patch('status/set')
-  async updateUserStatus(
-    @Req() req,
-    @Body() userStatus: UpdateUserStatusDto,
-  ): Promise<UpdateUserStatusResponseDTO> {
-    const userId = req.user._id.toString();
-    const user = await this.usersDatabaseService.findById(userId);
-    if (!user) throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
-
-    await this.usersDatabaseService.updateUser(userId, {
-      status: userStatus.status,
-      status_changed_at: new Date(),
-    });
-
-    // this.webSocketGateway.emitUpdatedUserList(1, 10);
-
-    return { success: true, status: userStatus.status };
   }
 
   @ApiOperation({ summary: 'Get users of a predefined roles' })

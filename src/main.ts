@@ -55,15 +55,8 @@ async function bootstrap() {
   );
 
   // enable cors for frontend
-  // TODO - @Sandaru create separate environment configs and map it here
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://bpodialer.net',
-      'https://dev-app.bpodialer.net',
-      'https://test-app.bpodialer.net',
-      'https://demo-app.bpodialer.net',
-    ],
+    origin: ['http://localhost:5173'],
   });
 
   const port = configService.get(SYSTEM_CONFIG_KEYS.PORT);

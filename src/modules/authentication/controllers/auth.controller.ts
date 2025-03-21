@@ -22,9 +22,14 @@ import { UserLoginResponseDTO } from '@dto/authentication/auth-response.dto';
 import { LogRequest } from '@common/decorators/log-request-response.decorator';
 import { RefreshTokenRequestDto } from '@dto/refresh-token/refresh-token-request.dto';
 import { RefreshTokenResponseDto } from '@dto/refresh-token/refresh-token-response.dto';
-import { IAuthCredentials, IUser } from '@interface/authorization/user';
+import {
+  IAuthCredentials,
+  ILoggedUser,
+  IUser,
+} from '@interface/authorization/user';
 import { AuthCommonService } from '../services/auth-common.service';
-import { RESET_METHOD,USER_STATUS } from '@constant/authorization/user';
+import { RESET_METHOD } from '@constant/authorization/user';
+import { LoggedUser } from '@common/decorators/logged-user.decorator';
 // import { EventsGateway } from 'src/websocket/websocket.gateway';
 
 @ApiTags('auth')
@@ -34,7 +39,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly authCommonService: AuthCommonService,
     private readonly usersDatabaseService: UsersDatabaseService,
-    // private readonly webSocketGateway: EventsGateway,
   ) {}
 
   @ApiOperation({ summary: 'Login in to the system' })
@@ -67,25 +71,6 @@ export class AuthController {
     // validate password and get access_token, refresh_token, permissions
     const tokensAndPermissions =
       await this.authService.validatePasswordAndGetToken(foundUser, body);
-
-    // update last login
-    const updatedUser = await this.usersDatabaseService.updateUser(
-      foundUser._id.toString(),
-      {
-        last_login: new Date(),
-      },
-    );
-
-    await this.usersDatabaseService.updateUser(foundUser._id.toString(), {
-      status: USER_STATUS.AVAILABLE,
-      status_changed_at: new Date(),
-    });
-
-    if (!updatedUser)
-      throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
-
-    // send user login event to the socket
-    // this.webSocketGateway.emitUpdatedUserList(1, 10);
 
     return {
       data: {
@@ -169,7 +154,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @LogRequest('auth -> getProfile')
   @Get('profile')
-  getProfile() {
-    return null;
+  async getProfile(@LoggedUser() loggedUser: ILoggedUser) {
+    const foundUser = await this.usersDatabaseService.findDocument({
+      _id: loggedUser._id,
+    });
+    if (!foundUser)
+      throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
+    return {
+      data: foundUser,
+    };
   }
 }
