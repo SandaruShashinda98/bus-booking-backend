@@ -48,7 +48,7 @@ export class BusController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN)
   @Get(':id')
-  async getSingleClockOutReason(@Param() pathParams: ObjectIDPathDTO) {
+  async getSingleBus(@Param() pathParams: ObjectIDPathDTO) {
     const foundBus = await this.busService.findById(pathParams.id);
 
     if (!foundBus)
@@ -83,7 +83,7 @@ export class BusController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN)
   @Patch(':id')
-  async updateClockOutReason(
+  async updateBus(
     @LoggedUser() loggedUser: ILoggedUser,
     @Param() pathParams: ObjectIDPathDTO,
     @Body() updateBusDto: any,
