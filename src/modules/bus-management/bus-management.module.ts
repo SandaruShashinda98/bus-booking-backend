@@ -11,6 +11,9 @@ import { BookingSchema } from '@module/bookings/schemas/booking.schema';
 import { BusSchema } from './schema/bus.schema';
 import { TripSchema } from './schema/trips.schema';
 import { RestaurantSchema } from './schema/restaurant.schema';
+import { BusStaffController } from './controlers/bus-staff.controller';
+import { BusStaffSchema } from './schema/bus-staff.schema';
+import { BusStaffService } from './services/bus-staff.service';
 
 const MongooseModules = [
   {
@@ -29,13 +32,22 @@ const MongooseModules = [
     name: DB_COLLECTION_NAMES.RESTAURANTS,
     schema: RestaurantSchema,
   },
+  {
+    name: DB_COLLECTION_NAMES.BUS_STAFF,
+    schema: BusStaffSchema,
+  },
 ];
 
-const services = [BusService, TripService, RestaurantService];
+const services = [BusService, TripService, RestaurantService, BusStaffService];
 @Global()
 @Module({
   imports: [MongooseModule.forFeature(MongooseModules)],
-  controllers: [BusController, TripController, RestaurantController],
+  controllers: [
+    BusController,
+    TripController,
+    RestaurantController,
+    BusStaffController,
+  ],
   providers: services,
   exports: services,
 })

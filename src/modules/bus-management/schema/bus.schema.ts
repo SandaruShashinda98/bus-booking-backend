@@ -11,11 +11,26 @@ const BusSchema = new Schema<IBusModel>({
     type: String,
     required: true,
   },
+  make_model: {
+    type: String,
+  },
+  year_of_manufacture: {
+    type: Schema.Types.Mixed,
+  },
+  seating_capacity: {
+    type: Schema.Types.Mixed,
+  },
+  facility_details: {
+    type: String,
+  },
+  assigned_route: {
+    type: String,
+  },
+  driver_conductor_linked: {
+    type: String,
+  },
 });
 
-const BusModel = model<IBusModel>(
-  DB_COLLECTION_NAMES.BUSSES,
-  BusSchema,
-);
+const BusModel = model<IBusModel>(DB_COLLECTION_NAMES.BUSSES, BusSchema);
 export default BusModel;
 export { BusSchema };

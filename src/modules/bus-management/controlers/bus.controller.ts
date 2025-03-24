@@ -21,8 +21,8 @@ import { PERMISSIONS } from '@constant/authorization/roles';
 import { BusService } from '../services/bus.service';
 import { IBus } from '@interface/booking/booking';
 
-@ApiTags('bus')
-@Controller({ path: 'bus' })
+@ApiTags('bus-fleet')
+@Controller({ path: 'bus-fleet' })
 export class BusController {
   constructor(private readonly busService: BusService) {}
 
@@ -67,6 +67,12 @@ export class BusController {
   ) {
     const busData: IBus = {
       bus_number: createReasonDto.bus_number,
+      make_model: createReasonDto.make_model,
+      year_of_manufacture: createReasonDto.year_of_manufacture,
+      seating_capacity: createReasonDto.seating_capacity,
+      facility_details: createReasonDto.facility_details,
+      assigned_route: createReasonDto.assigned_route,
+      driver_conductor_linked: createReasonDto.driver_conductor_linked,
       is_active: createReasonDto.is_active ?? true,
       created_by: loggedUser._id,
     };
@@ -88,7 +94,10 @@ export class BusController {
     @Param() pathParams: ObjectIDPathDTO,
     @Body() updateBusDto: any,
   ) {
+    const foundBus = await this.busService.findById(pathParams.id);
+
     const updatedBus = await this.busService.updateDocument({
+      ...foundBus,
       ...updateBusDto,
       changed_by: loggedUser._id,
     });

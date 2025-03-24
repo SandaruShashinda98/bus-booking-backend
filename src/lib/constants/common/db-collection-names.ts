@@ -9,6 +9,7 @@ export enum DB_COLLECTION_NAMES {
   //B
   BOOKINGS = 'bookings',
   BUSSES = 'busses',
+  BUS_STAFF = 'bus_staffs',
 
   //C
   CLOCK_OUT_REASONS = 'clock_out_reasons',
@@ -36,26 +37,3 @@ export enum DB_COLLECTION_NAMES {
   USERS = 'users',
   UPLOAD = 'uploads',
 }
-
-// export const MongooseModules = [
-//   {
-//     name: DB_COLLECTION_NAMES.USERS,
-//     schema: UserSchema,
-//   },
-//   {
-//     name: DB_COLLECTION_NAMES.BOOKINGS,
-//     schema: BookingSchema,
-//   },
-//   {
-//     name: DB_COLLECTION_NAMES.BUSSES,
-//     schema: BusSchema,
-//   },
-//   {
-//     name: DB_COLLECTION_NAMES.TRIPS,
-//     schema: TripSchema,
-//   },
-//   {
-//     name: DB_COLLECTION_NAMES.RESTAURANTS,
-//     schema: RestaurantSchema,
-//   },
-// ];

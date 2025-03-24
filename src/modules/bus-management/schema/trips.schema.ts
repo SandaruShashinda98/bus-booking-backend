@@ -9,11 +9,18 @@ const TripSchema = new Schema<ITripModel>({
   ...BaseEntitySchemaContent,
   start_location: {
     type: String,
-    required: true,
   },
-  end_location: {
+  destination: {
     type: String,
-    required: true,
+  },
+  start_date: {
+    type: Schema.Types.Mixed,
+  },
+  end_date: {
+    type: Schema.Types.Mixed,
+  },
+  status: {
+    type: Schema.Types.Mixed,
   },
 });
 

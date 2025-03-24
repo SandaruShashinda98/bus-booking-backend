@@ -14,12 +14,32 @@ export interface IBooking extends IBaseEntity {
   guardian_contact_no: string;
   special_instruction: string;
 }
+
 export interface IBus extends IBaseEntity {
   bus_number: string;
+  make_model?: string;
+  year_of_manufacture?: number;
+  seating_capacity?: number;
+  facility_details?: string;
+  assigned_route?: string;
+  driver_conductor_linked?: string;
 }
+
+export interface IBusStaff extends IBaseEntity {
+  staff_id: string;
+  staff_name?: string;
+  role?: string;
+  contact_number?: string;
+  assigned_trip?: string;
+  assigned_bus_number?: string;
+}
+
 export interface ITrip extends IBaseEntity {
-  start_location: string;
-  end_location: string;
+  start_location?: string;
+  destination?: string;
+  start_date?: any;
+  end_date?: any;
+  status?: string;
 }
 
 export interface IFood {
