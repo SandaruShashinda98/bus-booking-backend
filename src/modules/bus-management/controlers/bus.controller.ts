@@ -30,7 +30,7 @@ export class BusController {
     summary: 'Get all busses with filters and pagination',
   })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get()
   async filterBus(@Query() queryParams: any) {
     const foundBusses = await this.busService.filterDocumentsWithPagination(
@@ -46,7 +46,7 @@ export class BusController {
     summary: 'Get single bus by id',
   })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get(':id')
   async getSingleBus(@Param() pathParams: ObjectIDPathDTO) {
     const foundBus = await this.busService.findById(pathParams.id);
@@ -59,7 +59,7 @@ export class BusController {
 
   @ApiOperation({ summary: 'Create new bus' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Post()
   async createNewBus(
     @Body() createReasonDto: any,
@@ -87,7 +87,7 @@ export class BusController {
 
   @ApiOperation({ summary: 'Update bus' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Patch(':id')
   async updateBus(
     @LoggedUser() loggedUser: ILoggedUser,

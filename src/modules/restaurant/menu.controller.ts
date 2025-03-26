@@ -36,12 +36,8 @@ export class MenuController {
     summary: 'Get all menu with filters and pagination',
   })
   @ApiResponse({ type: FilterReasonResponseDTO })
-  // @UseGuards(JwtAuthGuard, PermissionGuard)
-  // @Permissions(PERMISSIONS.ADMIN)
   @Get()
   async filterMenu(@Query() queryParams: GetClockOutReasonQueryDTO) {
-    // const filters = this.referenceService.getClockOutFilters(queryParams);
-
     const foundMenus = await this.menuService.filterDocumentsWithPagination(
       {},
       queryParams.start || 0,
@@ -52,15 +48,22 @@ export class MenuController {
   }
 
   @ApiOperation({
+    summary: 'Get all orders',
+  })
+  @ApiResponse({ type: FilterReasonResponseDTO })
+  @Get('orders')
+  async filterOrder() {
+    const foundMenus = await this.menuService.filterMenuOrders();
+
+    return foundMenus;
+  }
+
+  @ApiOperation({
     summary: 'Get all menus - for search',
   })
   @ApiResponse({ type: CommonSearchResponseDTO })
-  // @UseGuards(JwtAuthGuard)
-  // @Permissions(PERMISSIONS.ADMIN)
   @Get('search')
   async filterSearchMenu(@Query() queryParams: GetClockOutReasonQueryDTO) {
-    // const filters = this.referenceService.getClockOutFilters(queryParams);
-
     const foundReasons = await this.menuService.filterSearchData(
       {},
       queryParams.start || 0,
@@ -75,10 +78,7 @@ export class MenuController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN)
   @Post()
-  async createMenu(
-    @Body() createMenuDto: any,
-    @LoggedUser() loggedUser: ILoggedUser,
-  ) {
+  async createMenu(@Body() createMenuDto: any) {
     const menu: IMenu = {
       ...createMenuDto,
     };
@@ -98,7 +98,6 @@ export class MenuController {
   async updateMenuFoods(
     @Body() updateMenuDto: Array<{ itemId: string; count: number; nic: any }>,
   ) {
-
     if (!updateMenuDto?.length) {
       return {
         data: null,
@@ -139,7 +138,7 @@ export class MenuController {
 
   @ApiOperation({ summary: 'Update menu' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @LogRequest('clock-out-reasons -> updateClockOutReason')
   @Patch(':id')
   async updateMenu(

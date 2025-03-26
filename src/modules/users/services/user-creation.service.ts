@@ -89,30 +89,30 @@ export class UserCreateService {
       await this.rolesService.rolesValidationHandler(userData.role);
 
     // create random generated password
-    const generatedPassword = this.generateRandomPassword();
+    // const generatedPassword = this.generateRandomPassword();
 
     // create new user
     const newUser = await this.usersDatabaseService.createUser(
       userData as unknown as Partial<IUser>,
-      generatedPassword,
+      password,
     );
 
     if (!newUser)
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
     // send onboarding reset password email
-    const resetToken = this.authCommonService.generateResetToken(newUser);
-    const mailSucceed = await this.emailService.sendOnboardingEmail(
-      userData.email.trim(),
-      generatedPassword,
-      resetToken,
-      RESET_METHOD.RESET_PASSWORD,
-    );
+    // const resetToken = this.authCommonService.generateResetToken(newUser);
+    // const mailSucceed = await this.emailService.sendOnboardingEmail(
+    //   userData.email.trim(),
+    //   generatedPassword,
+    //   resetToken,
+    //   RESET_METHOD.RESET_PASSWORD,
+    // );
 
-    if (!mailSucceed)
-      throw new UnprocessableEntityException([
-        RESPONSE_MESSAGES.EMAIL_SEND_FAIL,
-      ]);
+    // if (!mailSucceed)
+    //   throw new UnprocessableEntityException([
+    //     RESPONSE_MESSAGES.EMAIL_SEND_FAIL,
+    //   ]);
 
     return newUser;
   }

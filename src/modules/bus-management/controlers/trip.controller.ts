@@ -30,7 +30,7 @@ export class TripController {
     summary: 'Get all trips with filters and pagination',
   })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get()
   async filterTrips(@Query() queryParams: any) {
     const foundTrips = await this.tripService.filterDocumentsWithPagination(
@@ -104,7 +104,7 @@ export class TripController {
 
   @ApiOperation({ summary: 'Create new trip' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Post()
   async createNewTrip(
     @Body() createTripDto: any,

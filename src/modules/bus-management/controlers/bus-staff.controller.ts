@@ -30,7 +30,7 @@ export class BusStaffController {
     summary: 'Get all bus staff with filters and pagination',
   })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get()
   async filterBusStaff(@Query() queryParams: any) {
     const foundBusStaff =
@@ -47,7 +47,7 @@ export class BusStaffController {
     summary: 'Get single bus staff by id',
   })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get(':id')
   async getSingleBusStaff(@Param() pathParams: ObjectIDPathDTO) {
     const foundBusStaff = await this.busStaffService.findById(pathParams.id);
@@ -60,7 +60,7 @@ export class BusStaffController {
 
   @ApiOperation({ summary: 'Create new bus staff' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Post()
   async createNewBusStaff(
     @Body() createReasonDto: any,
@@ -87,7 +87,7 @@ export class BusStaffController {
 
   @ApiOperation({ summary: 'Update bus staff' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Patch(':id')
   async updateBusStaff(
     @LoggedUser() loggedUser: ILoggedUser,

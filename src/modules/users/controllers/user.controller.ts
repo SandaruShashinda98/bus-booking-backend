@@ -9,15 +9,12 @@ import {
   NotFoundException,
   Patch,
   Post,
-  Req,
 } from '@nestjs/common';
 import { RESPONSE_MESSAGES } from '@constant/common/responses';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { UsersDatabaseService } from '../services/user.database.service';
-import {
-  CreateUserDTO,
-} from '@dto/authorization/user-request.dto';
+import { CreateUserDTO } from '@dto/authorization/user-request.dto';
 import {
   CreateUserResponseDTO,
   FilterUserResponseDTO,
@@ -39,7 +36,6 @@ import { PERMISSIONS } from '@constant/authorization/roles';
 import { LogRequest } from '@common/decorators/log-request-response.decorator';
 import { VERSION_NUMBER } from '@constant/common/release-info';
 import { UserCreateService } from '../services/user-creation.service';
-// import { EventsGateway } from 'src/websocket/websocket.gateway';
 @ApiTags('users')
 @Controller({ path: 'users' })
 export class UserController {
@@ -47,7 +43,6 @@ export class UserController {
     private readonly usersDatabaseService: UsersDatabaseService,
     private readonly usersService: UsersService,
     private readonly userCreateService: UserCreateService,
-    // private readonly webSocketGateway: EventsGateway,
   ) {}
 
   @ApiOperation({ summary: 'Get all users with filters and pagination' })
@@ -88,7 +83,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get user by object id' })
   @ApiResponse({ type: FindUserResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get(':id')
   async getUserByID(@Param() pathParams: ObjectIDPathDTO) {
     const foundUser = await this.usersDatabaseService.getSingleUserWithMetaData(
@@ -104,7 +99,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get user by object id' })
   @ApiResponse({ type: FindUserResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  // @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
   @Get('name/:id')
   async getUserFullNameByID(@Param() pathParams: ObjectIDPathDTO) {
     const foundUser = await this.usersDatabaseService.findById(pathParams.id);
@@ -123,7 +118,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get all users with filters and pagination' })
   @ApiResponse({ type: UserMetaDataResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  // @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
   @LogRequest(`users -> filterUsersWithMetaData -> ${VERSION_NUMBER}`)
   @Post('meta-data')
   async filterUsersWithMetaData(@Body() filterBody: FilterUsersMetaDataDto) {
@@ -140,7 +135,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Check username or email exists' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Post('check-data-existence')
   async checkDataExistence(@Body() dataToCheck: DataToCheckDto) {
     const searchFilter =
@@ -170,7 +165,7 @@ export class UserController {
   })
   @ApiResponse({ type: CreateUserResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @LogRequest('users -> createUser')
   @Patch()
   async createUser(
@@ -191,7 +186,7 @@ export class UserController {
   @ApiOperation({ summary: 'Update new user' })
   @ApiResponse({ type: CreateUserResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @LogRequest('users -> updateUser')
   @Patch(':id')
   async updateUser(
@@ -225,7 +220,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Get users of a predefined roles' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.AGENT)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get('users-with-role/:name')
   async getUsersWithRole(@Param('name') name: string) {
     const usersWithRoles =
