@@ -41,6 +41,7 @@ export interface ITrip extends IBaseEntity {
   end_date?: any;
   status?: string;
   price?: string;
+  bus_number?: string;
   booked_seats?: any[];
 }
 

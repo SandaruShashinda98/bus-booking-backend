@@ -61,8 +61,8 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
       await this.createUser(
         {
           email: 'admin@example.com',
-          first_name: 'Admin',
-          last_name: 'User',
+          first_name: 'ABC',
+          last_name: 'Travels',
           username: 'admin',
           role: [roles.find((role) => role.role === 'Admin')?._id].filter(
             Boolean,

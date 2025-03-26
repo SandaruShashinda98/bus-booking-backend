@@ -28,6 +28,9 @@ const TripSchema = new Schema<ITripModel>({
   booked_seats: {
     type: Schema.Types.Mixed,
   },
+  bus_number: {
+    type: Schema.Types.Mixed,
+  },
 });
 
 const TripModel = model<ITripModel>(DB_COLLECTION_NAMES.TRIPS, TripSchema);

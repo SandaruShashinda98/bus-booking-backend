@@ -78,7 +78,7 @@ export class TripController {
 
     const filter = createTripFilter(queryParams);
 
-    const foundTrips = await this.tripService.filterDocumentsWithPagination(
+    const foundTrips = await this.tripService.filterTripsWith(
       filter,
       queryParams.start || 0,
       queryParams.size || 0,
@@ -138,8 +138,14 @@ export class TripController {
     const updatedTrip = await this.tripService.updateDocument({
       ...foundTrip,
       ...updateTripDto,
-      booked_seats: [...foundTrip.booked_seats, ...updateTripDto.booked_seats],
-      // changed_by: loggedUser._id,
+      booked_seats: [
+        ...(Array.isArray(foundTrip?.booked_seats)
+          ? foundTrip.booked_seats
+          : []),
+        ...(Array.isArray(updateTripDto?.booked_seats)
+          ? updateTripDto.booked_seats
+          : []),
+      ],
     });
 
     if (!updatedTrip)
