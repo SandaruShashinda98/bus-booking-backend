@@ -28,7 +28,6 @@ export enum DB_COLLECTION_NAMES {
 
   // R
   ROLES = 'roles',
-  RESTAURANTS = 'restaurants',
 
   // S
   SETTINGS = 'settings',

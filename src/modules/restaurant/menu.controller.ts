@@ -9,6 +9,7 @@ import {
   Query,
   InternalServerErrorException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ObjectIDPathDTO } from '@common/dto/object-id.path.dto';
 import { RESPONSE_MESSAGES } from '@constant/common/responses';
@@ -35,8 +36,8 @@ export class MenuController {
     summary: 'Get all menu with filters and pagination',
   })
   @ApiResponse({ type: FilterReasonResponseDTO })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard, PermissionGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Get()
   async filterMenu(@Query() queryParams: GetClockOutReasonQueryDTO) {
     // const filters = this.referenceService.getClockOutFilters(queryParams);
@@ -54,8 +55,8 @@ export class MenuController {
     summary: 'Get all menus - for search',
   })
   @ApiResponse({ type: CommonSearchResponseDTO })
-  @UseGuards(JwtAuthGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Get('search')
   async filterSearchMenu(@Query() queryParams: GetClockOutReasonQueryDTO) {
     // const filters = this.referenceService.getClockOutFilters(queryParams);
@@ -90,6 +91,52 @@ export class MenuController {
     return { data: newMenu };
   }
 
+  // public
+  @ApiOperation({ summary: 'Update menu' })
+  @LogRequest('clock-out-reasons -> updateClockOutReason')
+  @Patch('food')
+  async updateMenuFoods(
+    @Body() updateMenuDto: Array<{ itemId: string; count: number; nic: any }>,
+  ) {
+
+    if (!updateMenuDto?.length) {
+      return {
+        data: null,
+      };
+    }
+
+    try {
+      // Use Promise.all to properly await all async operations
+      await Promise.all(
+        updateMenuDto.map(async (menu) => {
+          const foundMenu = await this.menuService.findById(menu.itemId);
+
+          if (!foundMenu) {
+            throw new NotFoundException(
+              `Menu item with ID ${menu.itemId} not found`,
+            );
+          }
+
+          console.log(foundMenu);
+
+          return this.menuService.updateDocument({
+            ...foundMenu,
+            orders: [
+              ...(Array.isArray(foundMenu?.orders) ? foundMenu.orders : []),
+              { order_by_nic: menu?.nic, qty: menu.count },
+            ],
+          });
+        }),
+      );
+
+      return { data: updateMenuDto };
+    } catch (error) {
+      throw new BadRequestException(
+        error.message || 'Failed to update menu items',
+      );
+    }
+  }
+
   @ApiOperation({ summary: 'Update menu' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN)
@@ -108,6 +155,7 @@ export class MenuController {
     const updatedMenu = await this.menuService.updateDocument({
       ...foundMenu,
       ...updateMenuDto,
+      orders: [...foundMenu.orders, ...updateMenuDto.orders],
       changed_by: loggedUser._id,
     });
 

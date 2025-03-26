@@ -44,25 +44,12 @@ export interface ITrip extends IBaseEntity {
   booked_seats?: any[];
 }
 
-export interface IFood {
-  food_name: string;
-  ingredients: string[];
-  price: string;
-  date: Date;
-}
-
 //---- restaurant
-export interface IRestaurant extends IBaseEntity {
-  name: string;
-}
 export interface IMenu extends IBaseEntity {
   food: string;
   ingredients?: string;
   price?: number;
   date?: Date;
-}
-export interface IOrder extends IBaseEntity {
-  ingredients: string[];
-  price: string;
-  date: Date;
+  count: any;
+  orders?: { order_by_nic: any; qty: any }[];
 }

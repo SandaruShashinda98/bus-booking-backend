@@ -17,14 +17,11 @@ import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { UsersDatabaseService } from '../services/user.database.service';
 import {
   CreateUserDTO,
-  UpdateUserDTO,
-  UpdateUserStatusDto,
 } from '@dto/authorization/user-request.dto';
 import {
   CreateUserResponseDTO,
   FilterUserResponseDTO,
   FindUserResponseDTO,
-  UpdateUserStatusResponseDTO,
   UserMetaDataResponseDTO,
 } from '@dto/authorization/user-response.dto';
 import {

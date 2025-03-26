@@ -19,6 +19,12 @@ const MenuSchema = new Schema<IMenuModel>({
   date: {
     type: Date,
   },
+  count: {
+    type: Schema.Types.Mixed,
+  },
+  orders: {
+    type: Schema.Types.Mixed,
+  },
 });
 
 const MenuModel = model<IMenuModel>(DB_COLLECTION_NAMES.MENUS, MenuSchema);
