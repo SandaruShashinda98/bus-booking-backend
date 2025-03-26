@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BookingService } from './services/booking.service';
 import { BookingController } from './controllers/booking.controller';
 // import { BusSchema } from '@module/bus-management/schema/bus.schema';
-import { RestaurantSchema } from '@module/bus-management/schema/restaurant.schema';
 import { TripSchema } from '@module/bus-management/schema/trips.schema';
 import { BookingSchema } from './schemas/booking.schema';
 import { BusSchema } from '@module/bus-management/schema/bus.schema';
@@ -21,10 +20,6 @@ const MongooseModules = [
   {
     name: DB_COLLECTION_NAMES.TRIPS,
     schema: TripSchema,
-  },
-  {
-    name: DB_COLLECTION_NAMES.RESTAURANTS,
-    schema: RestaurantSchema,
   },
 ];
 const services = [BookingService];

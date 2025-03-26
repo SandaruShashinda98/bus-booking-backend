@@ -20,6 +20,9 @@ export enum DB_COLLECTION_NAMES {
   //L
   LEADS = 'leads',
 
+  //
+  MENUS = 'menus',
+
   // O
   OBJECT_LISTS = 'object_lists',
 

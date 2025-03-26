@@ -22,6 +22,12 @@ const TripSchema = new Schema<ITripModel>({
   status: {
     type: Schema.Types.Mixed,
   },
+  price: {
+    type: Schema.Types.Mixed,
+  },
+  booked_seats: {
+    type: Schema.Types.Mixed,
+  },
 });
 
 const TripModel = model<ITripModel>(DB_COLLECTION_NAMES.TRIPS, TripSchema);

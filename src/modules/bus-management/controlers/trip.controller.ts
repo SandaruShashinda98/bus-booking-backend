@@ -43,6 +43,20 @@ export class TripController {
   }
 
   @ApiOperation({
+    summary: 'Get all trips with public',
+  })
+  @Get('public')
+  async filterPublicTrips(@Query() queryParams: any) {
+    const foundTrips = await this.tripService.filterDocumentsWithPagination(
+      {},
+      queryParams.start || 0,
+      queryParams.size || 0,
+    );
+
+    return foundTrips;
+  }
+
+  @ApiOperation({
     summary: 'Get single trip by id',
   })
   @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -66,11 +80,7 @@ export class TripController {
     @LoggedUser() loggedUser: ILoggedUser,
   ) {
     const tripData: ITrip = {
-      start_location: createTripDto.start_location,
-      destination: createTripDto.destination,
-      start_date: createTripDto.start_date,
-      end_date: createTripDto.end_date,
-      status: createTripDto.status,
+      ...createTripDto,
       is_active: createTripDto.is_active ?? true,
       created_by: loggedUser._id,
     };
@@ -97,6 +107,7 @@ export class TripController {
     const updatedTrip = await this.tripService.updateDocument({
       ...foundTrip,
       ...updateTripDto,
+      booked_seats: [...foundTrip.booked_seats, ...updateTripDto.booked_seats],
       changed_by: loggedUser._id,
     });
 

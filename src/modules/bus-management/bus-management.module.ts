@@ -4,13 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BusController } from './controlers/bus.controller';
 import { BusService } from './services/bus.service';
 import { TripService } from './services/trip.service';
-import { RestaurantService } from './services/restaurant.service';
 import { TripController } from './controlers/trip.controller';
-import { RestaurantController } from './controlers/restaurant.controller';
 import { BookingSchema } from '@module/bookings/schemas/booking.schema';
 import { BusSchema } from './schema/bus.schema';
 import { TripSchema } from './schema/trips.schema';
-import { RestaurantSchema } from './schema/restaurant.schema';
 import { BusStaffController } from './controlers/bus-staff.controller';
 import { BusStaffSchema } from './schema/bus-staff.schema';
 import { BusStaffService } from './services/bus-staff.service';
@@ -29,25 +26,16 @@ const MongooseModules = [
     schema: TripSchema,
   },
   {
-    name: DB_COLLECTION_NAMES.RESTAURANTS,
-    schema: RestaurantSchema,
-  },
-  {
     name: DB_COLLECTION_NAMES.BUS_STAFF,
     schema: BusStaffSchema,
   },
 ];
 
-const services = [BusService, TripService, RestaurantService, BusStaffService];
+const services = [BusService, TripService, BusStaffService];
 @Global()
 @Module({
   imports: [MongooseModule.forFeature(MongooseModules)],
-  controllers: [
-    BusController,
-    TripController,
-    RestaurantController,
-    BusStaffController,
-  ],
+  controllers: [BusController, TripController, BusStaffController],
   providers: services,
   exports: services,
 })
