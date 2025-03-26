@@ -21,12 +21,12 @@ export const BaseEntitySchemaContent = {
     index: true,
   },
   changed_by: {
-    type: Schema.Types.ObjectId,
+    type: Schema.Types.Mixed,
     ref:DB_COLLECTION_NAMES.USERS,
     unique: false,
   },
   created_by: {
-    type: Schema.Types.ObjectId,
+    type: Schema.Types.Mixed,
     ref:DB_COLLECTION_NAMES.USERS,
     unique: false,
   },
