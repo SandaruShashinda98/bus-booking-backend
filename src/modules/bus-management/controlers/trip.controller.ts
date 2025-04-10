@@ -20,11 +20,15 @@ import { PermissionGuard } from '@common/guards/permission.guard';
 import { PERMISSIONS } from '@constant/authorization/roles';
 import { ITrip } from '@interface/booking/booking';
 import { TripService } from '../services/trip.service';
+import { BookingService } from '../services/booking.service';
 
 @ApiTags('trip')
 @Controller({ path: 'trip' })
 export class TripController {
-  constructor(private readonly tripService: TripService) {}
+  constructor(
+    private readonly tripService: TripService,
+    private readonly bookingService: BookingService,
+  ) {}
 
   @ApiOperation({
     summary: 'Get all trips with filters and pagination',
@@ -90,8 +94,6 @@ export class TripController {
   @ApiOperation({
     summary: 'Get single trip by id',
   })
-  // @UseGuards(JwtAuthGuard, PermissionGuard)
-  // @Permissions(PERMISSIONS.ADMIN)
   @Get(':id')
   async getSingleTrip(@Param() pathParams: ObjectIDPathDTO) {
     const foundTrip = await this.tripService.findById(pathParams.id);
@@ -125,11 +127,8 @@ export class TripController {
   }
 
   @ApiOperation({ summary: 'Update trip' })
-  // @UseGuards(JwtAuthGuard, PermissionGuard)
-  // @Permissions(PERMISSIONS.ADMIN)
   @Patch(':id')
   async updateTrip(
-    // @LoggedUser() loggedUser: ILoggedUser,
     @Param() pathParams: ObjectIDPathDTO,
     @Body() updateTripDto: any,
   ) {
@@ -149,6 +148,43 @@ export class TripController {
     });
 
     if (!updatedTrip)
+      throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
+
+    return { data: updatedTrip };
+  }
+
+  @ApiOperation({ summary: 'Update trip and booking' })
+  @Patch(':id')
+  async updateTripAndBooking(
+    @Param() pathParams: ObjectIDPathDTO,
+    @Body() updateTripDto: any,
+  ) {
+    const foundTrip = await this.tripService.findById(pathParams.id);
+
+    const updatedTrip = await this.tripService.updateDocument({
+      ...foundTrip,
+      ...updateTripDto,
+      booked_seats: [
+        ...(Array.isArray(foundTrip?.booked_seats)
+          ? foundTrip.booked_seats
+          : []),
+        ...(Array.isArray(updateTripDto?.booked_seats)
+          ? updateTripDto.booked_seats
+          : []),
+      ],
+    });
+
+    if (!updatedTrip)
+      throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
+
+    // Update the booking with the new booked seats
+    const updatedBooking = await this.bookingService.updateDocument({
+      ...updateTripDto,
+      trip_id: foundTrip._id,
+      seats: updateTripDto.booked_seats,
+    });
+
+    if (!updatedBooking)
       throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
 
     return { data: updatedTrip };

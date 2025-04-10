@@ -6,13 +6,20 @@ export interface IBooking extends IBaseEntity {
   booking_id: number; // document count + 1
   seats: number[];
   passenger_name: string;
-  passenger_nic: string;
+  nic: string;
   pick_up_location: string;
-  drop_off_location: string;
+  drop_location: string;
   contact_no: string;
   email: string;
-  guardian_contact_no: string;
+  guardian_contact: string;
   special_instruction: string;
+
+  //payment
+  card_number?: string;
+  card_expiry_date?: string;
+  card_cvv?: string;
+  card_holder_name?: string;
+  total_amount?: any;
 }
 
 export interface IBus extends IBaseEntity {

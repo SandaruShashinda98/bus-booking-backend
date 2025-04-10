@@ -14,43 +14,50 @@ const BookingSchema = new Schema<IBookingModel>({
   },
   booking_id: {
     type: Number,
-    required: true,
   },
   seats: {
     type: [Number],
-    required: true,
   },
   passenger_name: {
     type: String,
-    required: true,
   },
-  passenger_nic: {
+  nic: {
     type: String,
-    required: true,
   },
   pick_up_location: {
     type: String,
-    required: true,
   },
-  drop_off_location: {
+  drop_location: {
     type: String,
-    required: true,
   },
   contact_no: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
-    required: false,
   },
-  guardian_contact_no: {
+  guardian_contact: {
     type: String,
-    required: false,
   },
   special_instruction: {
     type: String,
-    required: false,
+  },
+
+  // Payment details
+  card_number: {
+    type: String,
+  },
+  card_expiry_date: {
+    type: String,
+  },
+  card_cvv: {
+    type: String,
+  },
+  card_holder_name: {
+    type: String,
+  },
+  total_amount: {
+    type: Schema.Types.Mixed,
   },
 });
 

@@ -3,7 +3,7 @@ import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
 import { IBooking } from '@interface/booking/booking';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IBookingModel } from '../schemas/booking.schema';
+import { IBookingModel } from '../../bus-management/schema/booking.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
