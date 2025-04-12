@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 
 export interface IBooking extends IBaseEntity {
   trip_id: Types.ObjectId;
-  booking_id: number; // document count + 1
+  booking_id?: string; // document count + 1
   seats: number[];
   passenger_name: string;
   nic: string;

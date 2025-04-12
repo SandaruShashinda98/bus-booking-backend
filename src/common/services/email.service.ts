@@ -166,7 +166,7 @@ export class EmailService {
       const startTime = new Date(tripData?.start_date).toLocaleTimeString();
 
       // Create booking reference ID (using booking_id or a combination of IDs)
-      const bookingReference =  bookingData.booking_id ? `BK${bookingData.booking_id?.toString()?.padStart(6, '0')}` : "BK123";
+      const bookingReference =  bookingData.booking_id ? `${bookingData.booking_id?.toString()?.padStart(6, '0')}` : "BK123";
 
       // Format card number to show only last 4 digits
       const maskedCardNumber = bookingData.card_number

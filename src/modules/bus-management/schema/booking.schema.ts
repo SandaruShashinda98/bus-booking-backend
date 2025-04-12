@@ -5,6 +5,7 @@ import { Document, model, Schema } from 'mongoose';
 
 export type IBookingModel = IBooking & Document;
 
+
 const BookingSchema = new Schema<IBookingModel>({
   ...BaseEntitySchemaContent,
   trip_id: {
@@ -13,7 +14,7 @@ const BookingSchema = new Schema<IBookingModel>({
     required: true,
   },
   booking_id: {
-    type: Number,
+    type: String,
   },
   seats: {
     type: [Number],

@@ -177,3 +177,16 @@ export const countObjectFields = (obj: any): number => {
 
   return fieldCount;
 };
+
+
+export function generateBookingID() {
+  const now = new Date();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const time =
+    now.getHours().toString().padStart(2, '0') +
+    now.getMinutes().toString().padStart(2, '0');
+
+  // Format: BK-MM-DD-HHMM
+  return `BK-${month}-${day}-${time}`;
+}

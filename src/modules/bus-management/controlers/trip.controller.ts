@@ -21,6 +21,7 @@ import { PERMISSIONS } from '@constant/authorization/roles';
 import { ITrip } from '@interface/booking/booking';
 import { TripService } from '../services/trip.service';
 import { BookingService } from '../services/booking.service';
+import { generateBookingID } from '@common/helpers/custom.helper';
 
 @ApiTags('trip')
 @Controller({ path: 'trip' })
@@ -154,6 +155,7 @@ export class TripController {
     const updatedBooking = await this.bookingService.addNewDocument({
       ...updateTripDto,
       trip_id: foundTrip._id,
+      booking_id: generateBookingID(),
       seats: updateTripDto.selected_seats,
     });
 
