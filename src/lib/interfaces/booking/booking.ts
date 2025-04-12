@@ -17,7 +17,7 @@ export interface IBooking extends IBaseEntity {
   //payment
   card_number?: string;
   card_expiry_date?: string;
-  card_cvv?: string;
+  card_cvc?: string;
   card_holder_name?: string;
   total_amount?: any;
 }

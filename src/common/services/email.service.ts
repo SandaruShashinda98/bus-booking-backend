@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
+import { IBooking, ITrip } from '@interface/booking/booking';
 
 @Injectable()
 export class EmailService {
@@ -151,6 +152,212 @@ export class EmailService {
       this.logger.error(
         `Failed to send password reset email to ${userEmail}:`,
         error,
+      );
+      return false;
+    }
+  }
+
+  async sendBookingDetails(tripData: ITrip, bookingData: IBooking) {
+    console.log(tripData)
+    console.log(bookingData)
+    try {
+      // Format dates
+      const startDate = new Date(tripData?.start_date).toLocaleDateString();
+      const startTime = new Date(tripData?.start_date).toLocaleTimeString();
+
+      // Create booking reference ID (using booking_id or a combination of IDs)
+      const bookingReference =  bookingData.booking_id ? `BK${bookingData.booking_id?.toString()?.padStart(6, '0')}` : "BK123";
+
+      // Format card number to show only last 4 digits
+      const maskedCardNumber = bookingData.card_number
+        ? `**** **** **** ${bookingData.card_number.slice(-4)}`
+        : 'N/A';
+
+      // Format seats as comma-separated list
+      const seatsFormatted = bookingData.seats.join(', ');
+
+      // Create email content
+      const mailOptions = {
+        from: this.configService.get<string>('EMAIL_USER'),
+        to: bookingData.email,
+        subject: 'Bus Buddy Booking Confirmation: Your Trip Details',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Bus Buddy - Booking Confirmation</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 600px;
+                margin: 0 auto;
+              }
+              .header {
+                background-color: #4A90E2;
+                color: white;
+                padding: 20px;
+                text-align: center;
+              }
+              .content {
+                padding: 20px;
+              }
+              .booking-details, .payment-details, .trip-details {
+                margin-bottom: 25px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              th, td {
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+              }
+              .footer {
+                background-color: #f2f2f2;
+                padding: 15px;
+                text-align: center;
+                font-size: 12px;
+              }
+              .special-note {
+                background-color: #f9f9f9;
+                padding: 15px;
+                border-left: 3px solid #4A90E2;
+                margin: 20px 0;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h1>Booking Confirmation</h1>
+              <p>Booking Reference: ${bookingReference}</p>
+            </div>
+            
+            <div class="content">
+              <p>Dear ${bookingData?.passenger_name},</p>
+              
+              <p>Thank you for choosing our service. Your booking has been confirmed! Below are the details of your trip:</p>
+              
+              <div class="trip-details">
+                <h2>Trip Information</h2>
+                <table>
+                  <tr>
+                    <th>From</th>
+                    <td>${tripData.start_location ?? "location"}</td>
+                  </tr>
+                  <tr>
+                    <th>To</th>
+                    <td>${tripData.destination ?? "destination"}</td>
+                  </tr>
+                  <tr>
+                    <th>Date</th>
+                    <td>${startDate}</td>
+                  </tr>
+                  <tr>
+                    <th>Time</th>
+                    <td>${startTime}</td>
+                  </tr>
+                  <tr>
+                    <th>Bus Number</th>
+                    <td>${tripData.bus_number ?? "bus number"}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <div class="booking-details">
+                <h2>Booking Details</h2>
+                <table>
+                  <tr>
+                    <th>Passenger Name</th>
+                    <td>${bookingData.passenger_name ?? "name"}</td>
+                  </tr>
+                  <tr>
+                    <th>NIC</th>
+                    <td>${bookingData.nic}</td>
+                  </tr>
+                  <tr>
+                    <th>Seat Number(s)</th>
+                    <td>${seatsFormatted}</td>
+                  </tr>
+                  <tr>
+                    <th>Pick-up Location</th>
+                    <td>${bookingData.pick_up_location}</td>
+                  </tr>
+                  <tr>
+                    <th>Drop Location</th>
+                    <td>${bookingData.drop_location}</td>
+                  </tr>
+                  <tr>
+                    <th>Contact Number</th>
+                    <td>${bookingData.contact_no}</td>
+                  </tr>
+                  <tr>
+                    <th>Emergency Contact</th>
+                    <td>${bookingData.guardian_contact}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <div class="payment-details">
+                <h2>Payment Information</h2>
+                <table>
+                  <tr>
+                    <th>Card Holder</th>
+                    <td>${bookingData.card_holder_name || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <th>Card Number</th>
+                    <td>${maskedCardNumber}</td>
+                  </tr>
+                  <tr>
+                    <th>Total Amount</th>
+                    <td>$${bookingData.total_amount ?? "total amount"}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              ${
+                bookingData.special_instruction
+                  ? `
+              <div class="special-note">
+                <h3>Special Instructions</h3>
+                <p>${bookingData.special_instruction}</p>
+              </div>
+              `
+                  : ''
+              }
+              
+              <p>Please arrive at least 30 minutes before departure. Keep this email as your booking confirmation.</p>
+              
+              <p>If you have any questions or need to make changes to your booking, please contact our customer service at <a href="mailto:support@example.com">support@example.com</a> or call us at +1-234-567-8900.</p>
+              
+              <p>We wish you a pleasant journey!</p>
+              
+              <p>Best regards,<br>Bus Buddy Team</p>
+            </div>
+            
+            <div class="footer">
+              <p>&copy; 2025 Bus Buddy. All rights reserved.</p>
+              <p>This is an automated email. Please do not reply to this message.</p>
+            </div>
+          </body>
+          </html>
+        `,
+      };
+
+      // Send email
+      const info = await this.transporter.sendMail(mailOptions);
+      this.logger.log(
+        `Booking confirmation email sent to ${bookingData.email}: ${info.messageId}`,
+      );
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Failed to send booking confirmation email: ${error.message}`,
+        error.stack,
       );
       return false;
     }

@@ -50,7 +50,7 @@ const BookingSchema = new Schema<IBookingModel>({
   card_expiry_date: {
     type: String,
   },
-  card_cvv: {
+  card_cvc: {
     type: String,
   },
   card_holder_name: {
@@ -62,20 +62,20 @@ const BookingSchema = new Schema<IBookingModel>({
 });
 
 // Create a pre-save hook to auto-increment booking_id
-BookingSchema.pre('save', async function (next) {
-  if (this.isNew) {
-    try {
-      // Find the count of documents to generate the next booking_id
-      const count = await model(DB_COLLECTION_NAMES.BOOKINGS).countDocuments();
-      this.booking_id = count + 1;
-      next();
-    } catch (error) {
-      next(error);
-    }
-  } else {
-    next();
-  }
-});
+// BookingSchema.pre('save', async function (next) {
+//   if (this.isNew) {
+//     try {
+//       // Find the count of documents to generate the next booking_id
+//       const count = await model(DB_COLLECTION_NAMES.BOOKINGS).countDocuments();
+//       this.booking_id = count + 1;
+//       next();
+//     } catch (error) {
+//       next(error);
+//     }
+//   } else {
+//     next();
+//   }
+// });
 
 const BookingModel = model<IBookingModel>(
   DB_COLLECTION_NAMES.BOOKINGS,

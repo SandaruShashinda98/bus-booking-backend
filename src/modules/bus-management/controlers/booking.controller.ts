@@ -24,6 +24,7 @@ import { IBooking } from '@interface/booking/booking';
 import { Types } from 'mongoose';
 import { TripService } from '@module/bus-management/services/trip.service';
 import { BookingService } from '../services/booking.service';
+import { EmailService } from '@common/services/email.service';
 
 @ApiTags('booking')
 @Controller({ path: 'booking' })
@@ -31,6 +32,7 @@ export class BookingController {
   constructor(
     private readonly bookingService: BookingService,
     private readonly tripService: TripService,
+    private readonly emailService: EmailService,
   ) {}
 
   @ApiOperation({
@@ -164,22 +166,27 @@ export class BookingController {
   @ApiOperation({ summary: 'update payment' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN)
-  @Patch('booking-id/:bookingId')
+  @Patch('booking-payment/:tripId')
   async updatePaymentDetails(
     @LoggedUser() loggedUser: ILoggedUser,
-    @Param('bookingId') bookingId: number,
+    @Param('tripId') tripId: any,
     @Body() updateBookingDto: any,
   ) {
-    const foundBooking = await this.bookingService.findDocument({
-      booking_id: bookingId,
-    });
+    if (!updateBookingDto.booking_id)
+      throw new InternalServerErrorException([
+        RESPONSE_MESSAGES.DATA_NOT_FOUND,
+      ]);
+
+    const foundBooking = await this.bookingService.findById(
+      updateBookingDto.booking_id,
+    );
 
     if (!foundBooking)
       throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
 
     const updatedBookingData: IBooking = {
       ...foundBooking,
-      card_cvv: updateBookingDto.card_cvv,
+      card_cvc: updateBookingDto.card_cvc,
       card_expiry_date: updateBookingDto.card_expiry_date,
       card_number: updateBookingDto.card_number,
       card_holder_name: updateBookingDto.card_holder_name,
@@ -192,6 +199,10 @@ export class BookingController {
 
     if (!updatedBooking)
       throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
+
+    const foundTrip = await this.tripService.findById(tripId?.toString());
+
+    await this.emailService.sendBookingDetails(foundTrip, updatedBooking);
 
     return { data: updatedBooking };
   }
