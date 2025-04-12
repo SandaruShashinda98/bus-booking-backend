@@ -12,6 +12,7 @@ export interface IUser extends IBaseEntity {
   contact_number?: string;
   nic?: string;
   employee_id?: string;
+  user_role: string; //ADMIN, BUS_OWNER, DRIVER, CONDUCTOR, RESTAURANT
 }
 
 export type ILoggedUser = IUser & Pick<ILoginPayload, 'permissions'>;

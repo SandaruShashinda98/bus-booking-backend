@@ -44,6 +44,10 @@ const UserSchema = new Schema<IUserModel>({
   employee_id: {
     type: String,
   },
+  user_role: {
+    type:String,
+    default: "ADMIN"
+  }
 });
 
 const UserModel = model<IUserModel>(DB_COLLECTION_NAMES.USERS, UserSchema);
