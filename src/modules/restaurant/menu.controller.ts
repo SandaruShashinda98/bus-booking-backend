@@ -78,9 +78,13 @@ export class MenuController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN)
   @Post()
-  async createMenu(@Body() createMenuDto: any) {
+  async createMenu(
+    @Body() createMenuDto: any,
+    @LoggedUser() loggedUser: ILoggedUser,
+  ) {
     const menu: IMenu = {
       ...createMenuDto,
+      restaurant: `${loggedUser.first_name} ${loggedUser.last_name}`,
     };
 
     const newMenu = await this.menuService.addNewDocument(menu);

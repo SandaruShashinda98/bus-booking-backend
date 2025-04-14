@@ -42,6 +42,7 @@ export interface IBusStaff extends IBaseEntity {
 }
 
 export interface ITrip extends IBaseEntity {
+  bus_company: string;
   start_location?: string;
   destination?: string;
   start_date?: any;
@@ -54,10 +55,12 @@ export interface ITrip extends IBaseEntity {
 
 //---- restaurant
 export interface IMenu extends IBaseEntity {
+  restaurant: string;
   food: string;
   ingredients?: string;
   price?: number;
   date?: Date;
   count: any;
+  is_available:boolean
   orders?: { order_by_nic: any; qty: any }[];
 }

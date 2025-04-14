@@ -7,6 +7,9 @@ export type IMenuModel = IMenu & Document;
 
 const MenuSchema = new Schema<IMenuModel>({
   ...BaseEntitySchemaContent,
+  restaurant: {
+    type: String,
+  },
   food: {
     type: String,
   },
@@ -21,6 +24,10 @@ const MenuSchema = new Schema<IMenuModel>({
   },
   count: {
     type: Schema.Types.Mixed,
+  },
+  is_available: {
+    type: Boolean,
+    default: true
   },
   orders: {
     type: Schema.Types.Mixed,

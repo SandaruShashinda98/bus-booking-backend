@@ -115,6 +115,7 @@ export class TripController {
   ) {
     const tripData: ITrip = {
       ...createTripDto,
+      bus_company: `${loggedUser.first_name} ${loggedUser.last_name}`,
       is_active: createTripDto.is_active ?? true,
       created_by: loggedUser._id,
     };

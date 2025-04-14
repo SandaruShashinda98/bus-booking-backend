@@ -180,6 +180,9 @@ export class BookingController {
     if (!deletedBooking)
       throw new NotFoundException([RESPONSE_MESSAGES.DB_FAILURE]);
 
+    // cancel email
+    await this.emailService.sendCancelEmail(foundBooking)
+
     return {
       data: deletedBooking,
     };

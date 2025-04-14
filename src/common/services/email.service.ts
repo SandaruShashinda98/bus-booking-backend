@@ -362,4 +362,162 @@ export class EmailService {
       return false;
     }
   }
+
+  async sendCancelEmail(bookingData: IBooking) {
+    try {
+      const subject = 'Booking Cancellation Confirmation';
+      
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Booking Cancellation</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              color: #333333;
+              margin: 0;
+              padding: 0;
+            }
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+            }
+            .header {
+              background-color: #4A90E2;
+              color: white;
+              text-align: center;
+              padding: 20px;
+              border-bottom: 3px solid #0066cc;
+            }
+            .content {
+              padding: 20px;
+            }
+            .booking-details {
+              background-color: #f8f9fa;
+              border-radius: 5px;
+              padding: 15px;
+              margin: 20px 0;
+            }
+            .booking-item {
+              margin-bottom: 10px;
+            }
+            .booking-label {
+              font-weight: bold;
+              display: inline-block;
+              width: 150px;
+            }
+            .footer {
+              text-align: center;
+              font-size: 12px;
+              color: #666666;
+              margin-top: 20px;
+              padding-top: 20px;
+              border-top: 1px solid #eeeeee;
+            }
+            .btn {
+              display: inline-block;
+              background-color: #0066cc;
+              color: white;
+              text-decoration: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+              margin-top: 15px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Booking Cancellation Confirmation</h1>
+            </div>
+            
+            <div class="content">
+              <p>Dear ${bookingData.passenger_name},</p>
+              
+              <p>This email confirms that your booking <strong>#${bookingData.booking_id}</strong> has been successfully cancelled as requested.</p>
+              
+              <div class="booking-details">
+                <h3>Cancelled Booking Details:</h3>
+                
+                <div class="booking-item">
+                  <span class="booking-label">Booking ID:</span> ${bookingData.booking_id}
+                </div>
+                
+                <div class="booking-item">
+                  <span class="booking-label">Passenger:</span> ${bookingData.passenger_name}
+                </div>
+                
+                <div class="booking-item">
+                  <span class="booking-label">NIC:</span> ${bookingData.nic}
+                </div>
+                
+                <div class="booking-item">
+                  <span class="booking-label">Pick-up Location:</span> ${bookingData.pick_up_location}
+                </div>
+                
+                <div class="booking-item">
+                  <span class="booking-label">Drop Location:</span> ${bookingData.drop_location}
+                </div>
+                
+                <div class="booking-item">
+                  <span class="booking-label">Seat Number(s):</span> ${bookingData.seats.join(', ')}
+                </div>
+                
+                ${bookingData.total_amount ? `
+                  <div class="booking-item">
+                    <span class="booking-label">Amount Paid:</span> ${bookingData.total_amount}
+                  </div>
+                ` : ''}
+              </div>
+              
+              <p><strong>Refund Information:</strong></p>
+              <p>If eligible, a refund will be processed to your original payment method within 5-7 business days.</p>
+              
+              <p>If you have any questions or require further assistance, please don't hesitate to contact our customer service team at support@example.com or call us at +1-800-123-4567.</p>
+              
+              <p>Thank you for using our services.</p>
+              
+              <p>Sincerely,<br>
+              Bus Buddy Team</p>
+              
+              <a href="https://example.com/bookings" class="btn">View Booking History</a>
+            </div>
+            
+            <div class="footer">
+              <p>This is an automated email. Please do not reply to this message.</p>
+              <p>© ${new Date().getFullYear()} Bus Buddy. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      // Create mail options
+      const mailOptions = {
+        from: this.configService.get<string>('EMAIL_USER'),
+        to: bookingData.email,
+        subject: subject,
+        html: htmlContent,
+      };
+      
+      // Send the email
+      const info = await this.transporter.sendMail(mailOptions);
+      
+      this.logger.log(
+        `Cancellation email sent to ${bookingData.email} for booking ${bookingData.booking_id}: ${info.messageId}`
+      );
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Failed to send cancellation email: ${error.message}`,
+        error.stack
+      );
+      return false;
+    }
+  }
 }
