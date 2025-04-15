@@ -1,12 +1,12 @@
 {
-  "name": "bpodialer-backend",
+  "name": "bus buddy",
   "version": "0.0.1",
   "description": "",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start:dev:clean": "bash scripts/kill-port.sh 3100 && nest start --watch",
+    "start:dev:clean": "powershell -ExecutionPolicy Bypass -File .\\scripts\\kill-port.ps1 -Port 3000 && nest start --watch",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
