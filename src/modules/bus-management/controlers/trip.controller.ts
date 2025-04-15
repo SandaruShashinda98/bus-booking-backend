@@ -37,12 +37,30 @@ export class TripController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get()
-  async filterTrips(@Query() queryParams: any) {
-    const foundTrips = await this.tripService.filterDocumentsWithPagination(
-      {},
-      queryParams.start || 0,
-      queryParams.size || 0,
-    );
+  async filterTrips(
+    @Query() queryParams: any,
+    @LoggedUser() loggedUser: ILoggedUser,
+  ) {
+    console.log(loggedUser.user_role);
+
+    let foundTrips;
+
+    if (
+      loggedUser.user_role === 'CONDUCTOR' ||
+      loggedUser.user_role === 'DRIVER'
+    ) {
+      foundTrips = await this.tripService.filterDocumentsWithPagination(
+        {},
+        queryParams.start || 0,
+        queryParams.size || 0,
+      );
+    } else {
+      foundTrips = await this.tripService.filterDocumentsWithPagination(
+        { created_by: loggedUser._id },
+        queryParams.start || 0,
+        queryParams.size || 0,
+      );
+    }
 
     return foundTrips;
   }
@@ -76,6 +94,35 @@ export class TripController {
           $gte: startOfDay,
           $lte: endOfDay,
         };
+
+        // Handle time preference filtering
+        if (query.timePreference) {
+          if (query.timePreference === 'morning') {
+            // Morning: 6AM - 12PM
+            const morningStart = new Date(queryDate);
+            morningStart.setHours(6, 0, 0, 0);
+
+            const morningEnd = new Date(queryDate);
+            morningEnd.setHours(12, 0, 0, 0);
+
+            filter.start_date = {
+              $gte: morningStart,
+              $lt: morningEnd,
+            };
+          } else if (query.timePreference === 'night') {
+            // Night: 12AM - 6AM
+            const nightStart = new Date(queryDate);
+            nightStart.setHours(0, 0, 0, 0);
+
+            const nightEnd = new Date(queryDate);
+            nightEnd.setHours(6, 0, 0, 0);
+
+            filter.start_date = {
+              $gte: nightStart,
+              $lt: nightEnd,
+            };
+          }
+        }
       }
 
       return filter;

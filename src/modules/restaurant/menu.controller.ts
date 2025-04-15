@@ -36,8 +36,28 @@ export class MenuController {
     summary: 'Get all menu with filters and pagination',
   })
   @ApiResponse({ type: FilterReasonResponseDTO })
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
+  @UseGuards(JwtAuthGuard, PermissionGuard)
   @Get()
-  async filterMenu(@Query() queryParams: GetClockOutReasonQueryDTO) {
+  async filterMenu(
+    @Query() queryParams: GetClockOutReasonQueryDTO,
+    @LoggedUser() loggedUser: ILoggedUser,
+  ) {
+    const foundMenus = await this.menuService.filterDocumentsWithPagination(
+      { created_by: loggedUser._id },
+      queryParams.start || 0,
+      queryParams.size || 0,
+    );
+
+    return foundMenus;
+  }
+
+  @ApiOperation({
+    summary: 'Get all menu with filters and pagination',
+  })
+  @ApiResponse({ type: FilterReasonResponseDTO })
+  @Get('public')
+  async filterPublicMenu(@Query() queryParams: GetClockOutReasonQueryDTO) {
     const foundMenus = await this.menuService.filterDocumentsWithPagination(
       {},
       queryParams.start || 0,
@@ -51,9 +71,13 @@ export class MenuController {
     summary: 'Get all orders',
   })
   @ApiResponse({ type: FilterReasonResponseDTO })
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get('orders')
-  async filterOrder() {
-    const foundMenus = await this.menuService.filterMenuOrders();
+  async filterOrder(@LoggedUser() loggedUser: ILoggedUser) {
+    const foundMenus = await this.menuService.filterMenuOrders({
+      created_by: loggedUser._id,
+    });
 
     return foundMenus;
   }
@@ -76,7 +100,7 @@ export class MenuController {
 
   @ApiOperation({ summary: 'Create new menu' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Post()
   async createMenu(
     @Body() createMenuDto: any,
@@ -85,6 +109,7 @@ export class MenuController {
     const menu: IMenu = {
       ...createMenuDto,
       restaurant: `${loggedUser.first_name} ${loggedUser.last_name}`,
+      created_by: loggedUser._id,
     };
 
     const newMenu = await this.menuService.addNewDocument(menu);
@@ -97,7 +122,7 @@ export class MenuController {
 
   // public
   @ApiOperation({ summary: 'Update menu' })
-  @LogRequest('clock-out-reasons -> updateClockOutReason')
+  @LogRequest('menu -> updateMenuFoods')
   @Patch('food')
   async updateMenuFoods(
     @Body() updateMenuDto: Array<{ itemId: string; count: number; nic: any }>,
@@ -143,7 +168,7 @@ export class MenuController {
   @ApiOperation({ summary: 'Update menu' })
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
-  @LogRequest('clock-out-reasons -> updateClockOutReason')
+  @LogRequest('menu -> updateMenu')
   @Patch(':id')
   async updateMenu(
     @LoggedUser() loggedUser: ILoggedUser,
@@ -158,7 +183,6 @@ export class MenuController {
     const updatedMenu = await this.menuService.updateDocument({
       ...foundMenu,
       ...updateMenuDto,
-      orders: [...foundMenu.orders, ...updateMenuDto.orders],
       changed_by: loggedUser._id,
     });
 

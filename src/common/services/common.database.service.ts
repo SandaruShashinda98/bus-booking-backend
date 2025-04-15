@@ -61,7 +61,7 @@ export abstract class CommonDatabaseService<T extends IBaseEntity> {
       { $match: filters },
       {
         $facet: {
-          data: [{ $sort: { created_on: -1 } }, ...paginator(skip, limit)],
+          data: [{ $sort: { created_on: -1 } }],
           count: [{ $count: 'total' }],
         },
       },

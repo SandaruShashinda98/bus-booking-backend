@@ -312,10 +312,6 @@ export class EmailService {
                     <th>Card Number</th>
                     <td>${maskedCardNumber}</td>
                   </tr>
-                  <tr>
-                    <th>Total Amount</th>
-                    <td>$${bookingData.total_amount ?? "total amount"}</td>
-                  </tr>
                 </table>
               </div>
               

@@ -15,11 +15,12 @@ export class MenuService extends CommonDatabaseService<IMenu> {
     super(menuModel, DB_COLLECTION_NAMES.MENUS);
   }
 
-  async filterMenuOrders() {
+  async filterMenuOrders(filters:any) {
     try {
       // Use aggregation pipeline to get all orders
       const allOrders = await this.menuModel.aggregate([
         // Match documents that have orders
+        { $match: filters },
         {
           $match: {
             orders: { $exists: true, $ne: [] },

@@ -169,7 +169,7 @@ export class UserController {
   @LogRequest('users -> createUser')
   @Patch()
   async createUser(
-    @Body() createUserDto: CreateUserDTO,
+    @Body() createUserDto: any,
     @LoggedUser() loggedUser: ILoggedUser,
   ) {
     const userData = await this.userCreateService.createOrUpdateUser(

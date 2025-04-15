@@ -30,6 +30,7 @@ import {
 import { AuthCommonService } from '../services/auth-common.service';
 import { RESET_METHOD } from '@constant/authorization/user';
 import { LoggedUser } from '@common/decorators/logged-user.decorator';
+import * as bcrypt from 'bcrypt';
 // import { EventsGateway } from 'src/websocket/websocket.gateway';
 
 @ApiTags('auth')
@@ -149,6 +150,30 @@ export class AuthController {
       refresh_token: token.refresh_token,
       access_token_expires_in: 864000, //expires in 10 days
     };
+  }
+
+  @Post('register')
+  async register(@Body() body: any) {
+    const foundUser = await this.usersDatabaseService.findDocument({
+      email: body.email,
+    });
+
+    if (!foundUser)
+      throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
+
+    const foundCredentials = await this.authService.findAuthCredentials(
+      foundUser._id,
+    );
+
+    if (!foundCredentials)
+      throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
+
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+
+    await this.authService.updateAuthCredential(foundCredentials._id, {
+      ...foundCredentials,
+      password: hashedPassword,
+    });
   }
 
   @UseGuards(JwtAuthGuard)

@@ -32,9 +32,12 @@ export class BusController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get()
-  async filterBus(@Query() queryParams: any) {
+  async filterBus(
+    @Query() queryParams: any,
+    @LoggedUser() loggedUser: ILoggedUser,
+  ) {
     const foundBusses = await this.busService.filterDocumentsWithPagination(
-      {},
+      { created_by: loggedUser._id },
       queryParams.start || 0,
       queryParams.size || 0,
     );

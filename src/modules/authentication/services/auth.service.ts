@@ -293,4 +293,10 @@ export class AuthService {
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
     }
   }
+
+  async findAuthCredentials(user_id: Types.ObjectId) {
+    return (
+      await this.authCredentialsModel.findOne({ user_id })?.exec()
+    )?.toObject();
+  }
 }

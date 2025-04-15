@@ -5,7 +5,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { UsersDatabaseService } from './user.database.service';
 import { RESPONSE_MESSAGES } from '@constant/common/responses';
 import { ILoggedUser, IUser } from '@interface/authorization/user';
@@ -48,13 +48,13 @@ export class UserCreateService {
     loggedUser: ILoggedUser,
   ) {
     // for new user - create user
-    if (!createUserDto._id || !isValidObjectId(createUserDto._id)) {
+    // if (!createUserDto._id || !isValidObjectId(createUserDto._id)) {
       return await this.createUser(createUserDto, loggedUser);
-    }
+    // }
     // for existing user - update user
-    else {
-      return await this.editUser(createUserDto, loggedUser);
-    }
+    // else {
+    //   return await this.editUser(createUserDto, loggedUser);
+    // }
   }
 
   async createUser(createUserDto: CreateUserDTO, loggedUser: ILoggedUser) {
@@ -83,18 +83,21 @@ export class UserCreateService {
 
     // set created by
     (userData as unknown as Partial<IUser>).created_by = loggedUser._id;
+    (userData as unknown as Partial<IUser>).role = [
+      new Types.ObjectId('67e439b0ef47fc302f440aee'),
+    ];
 
     // validate roles and set roles
-    (userData as unknown as Partial<IUser>).role =
-      await this.rolesService.rolesValidationHandler(userData.role);
+    // (userData as unknown as Partial<IUser>).role =
+    //   await this.rolesService.rolesValidationHandler(userData.role);
 
     // create random generated password
-    // const generatedPassword = this.generateRandomPassword();
+    const generatedPassword = this.generateRandomPassword();
 
     // create new user
     const newUser = await this.usersDatabaseService.createUser(
       userData as unknown as Partial<IUser>,
-      password,
+      generatedPassword,
     );
 
     if (!newUser)
