@@ -8,7 +8,6 @@ import {
   UseGuards,
   Query,
   InternalServerErrorException,
-  Delete,
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
