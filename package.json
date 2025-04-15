@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start:dev:clean": "powershell -ExecutionPolicy Bypass -File .\\scripts\\kill-port.ps1 -Port 3000 && nest start --watch",
+    "start:dev:clean": ".\\scripts\\kill-port-3100.bat && nest start --watch",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
