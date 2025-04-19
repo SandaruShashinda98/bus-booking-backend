@@ -26,7 +26,7 @@ export const BaseEntitySchemaContent = {
     unique: false,
   },
   created_by: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     ref:DB_COLLECTION_NAMES.USERS,
     unique: false,
   },

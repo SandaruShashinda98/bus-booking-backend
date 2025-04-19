@@ -51,6 +51,11 @@ export interface ITrip extends IBaseEntity {
   price?: string;
   bus_number?: string;
   booked_seats?: any[];
+
+  driver_conductor_name?: string;
+  washroom_stops?:any;
+  facilities?:string;
+  bus_type?:string;
 }
 
 //---- restaurant

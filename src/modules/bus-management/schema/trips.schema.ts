@@ -31,6 +31,19 @@ const TripSchema = new Schema<ITripModel>({
   bus_number: {
     type: Schema.Types.Mixed,
   },
+
+  driver_conductor_name: {
+    type: Schema.Types.Mixed,
+  },
+  washroom_stops: {
+    type: Schema.Types.Mixed,
+  },
+  facilities: {
+    type: Schema.Types.Mixed,
+  },
+  bus_type: {
+    type: Schema.Types.Mixed,
+  },
 });
 
 const TripModel = model<ITripModel>(DB_COLLECTION_NAMES.TRIPS, TripSchema);

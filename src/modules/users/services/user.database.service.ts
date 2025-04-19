@@ -67,7 +67,7 @@ export class UsersDatabaseService extends CommonDatabaseService<IUser> {
           role: [roles.find((role) => role.role === 'Admin')?._id].filter(
             Boolean,
           ),
-          created_by: SYSTEM_CHANGES.SYSTEM,
+          // created_by: SYSTEM_CHANGES.SYSTEM,
         },
         'admin123', //password
       );

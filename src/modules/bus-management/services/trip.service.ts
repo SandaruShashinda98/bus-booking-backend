@@ -53,6 +53,10 @@ export class TripService extends CommonDatabaseService<ITrip> {
         created_on: 1,
         last_modified_on: 1,
         is_active: 1,
+        driver_conductor_name: 1,
+        washroom_stops: 1,
+        facilities: 1,
+        bus_type: 1,
         creator: {
           _id: '$creator._id',
           first_name: '$creator.first_name',
