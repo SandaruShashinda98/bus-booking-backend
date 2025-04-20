@@ -127,7 +127,7 @@ export class MenuController {
   async updateMenuFoods(
     @Body() updateMenuDto: Array<{ itemId: string; count: number; nic: any }>,
   ) {
-    console.log("updateMenuDto",updateMenuDto);
+    // console.log("updateMenuDto",updateMenuDto);
     if (!updateMenuDto?.length) {
       return {
         data: null,
@@ -146,7 +146,7 @@ export class MenuController {
             );
           }
 
-          console.log(foundMenu);
+          // console.log(foundMenu);
 
           return this.menuService.updateDocument({
             ...foundMenu,
