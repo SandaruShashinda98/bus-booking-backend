@@ -276,22 +276,22 @@ export class AuthService {
     if (!authCredentialUpdate)
       throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
 
-    try {
-      // send email
-      await this.emailService.sendResetPasswordEmail(
-        foundUser.email,
-        resetToken,
-        RESET_METHOD.FORGOT_PASSWORD,
-      );
+    // try {
+    //   // send email
+    //   await this.emailService.sendResetPasswordEmail(
+    //     foundUser.email,
+    //     resetToken,
+    //     RESET_METHOD.FORGOT_PASSWORD,
+    //   );
 
-      return authCredentialUpdate;
-    } catch (error) {
-      new Logger().debug(
-        `auth.service.ts -> requestForgotPassword -> ${error}`,
-        'DEBUG',
-      );
-      throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
-    }
+    //   return authCredentialUpdate;
+    // } catch (error) {
+    //   new Logger().debug(
+    //     `auth.service.ts -> requestForgotPassword -> ${error}`,
+    //     'DEBUG',
+    //   );
+    //   throw new UnprocessableEntityException([RESPONSE_MESSAGES.DB_FAILURE]);
+    // }
   }
 
   async findAuthCredentials(user_id: Types.ObjectId) {

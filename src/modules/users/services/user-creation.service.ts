@@ -84,7 +84,7 @@ export class UserCreateService {
     // set created by
     (userData as unknown as Partial<IUser>).created_by = loggedUser._id;
     (userData as unknown as Partial<IUser>).role = [
-      new Types.ObjectId('67e439b0ef47fc302f440aee'),
+      new Types.ObjectId('68047f6d1c7bd166f191ac08'),
     ];
 
     // validate roles and set roles

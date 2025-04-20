@@ -228,11 +228,10 @@ export class BookingController {
   }
 
   @ApiOperation({ summary: 'Update booking' })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard, PermissionGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Patch(':id')
   async updateBooking(
-    @LoggedUser() loggedUser: ILoggedUser,
     @Param() pathParams: ObjectIDPathDTO,
     @Body() updateBookingDto: any,
   ) {
@@ -281,8 +280,8 @@ export class BookingController {
 
     const updatedBooking = await this.bookingService.updateDocument({
       _id: pathParams.id,
+      ...currentBooking,
       ...updateBookingDto,
-      changed_by: loggedUser._id,
     });
 
     if (!updatedBooking)

@@ -22,160 +22,28 @@ export class EmailService {
     });
   }
 
-  /**
-   * Send an onboarding email to a newly created user
-   * @param userEmail The email of the user
-   * @param tempPassword The temporary password generated for the user
-   * @param resetToken The token for password reset
-   */
-  async sendOnboardingEmail(
-    userEmail: string,
-    tempPassword: string,
-    resetToken: string,
-    resetMethod: string,
-  ): Promise<boolean> {
-    try {
-      const appUrl = this.configService.get<string>(
-        'APP_URL',
-        'http://localhost:3000',
-      );
-      const resetLink = `${appUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(userEmail)}&resetMethod=${resetMethod}`;
-
-      const mailOptions = {
-        from: `"${this.configService.get<string>('EMAIL_FROM_NAME', 'System Admin')}" <${this.configService.get<string>('EMAIL_FROM')}>`,
-        to: userEmail,
-        subject: 'Welcome to RingHD - Your Account Details',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Welcome to RingHD!</h2>
-            <p>Your account has been created successfully. Please find your login details below:</p>
-            
-            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p><strong>Email:</strong> ${userEmail}</p>
-              <p><strong>Temporary Password:</strong> ${tempPassword}</p>
-            </div>
-            
-            <p>For security reasons, please reset your password by clicking the button below:</p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-                Reset Password
-              </a>
-            </div>
-            
-            <p>If the button doesn't work, you can copy and paste the following link into your browser:</p>
-            <p><a href="${resetLink}">${resetLink}</a></p>
-            
-            <p>This link will expire in 24 hours for security reasons.</p>
-            
-            <p>If you did not request this account, please ignore this email or contact our support team.</p>
-            
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #777; font-size: 12px;">
-              <p>This is an automated email. Please do not reply to this message.</p>
-            </div>
-          </div>
-        `,
-      };
-
-      const info = await this.transporter.sendMail(mailOptions);
-      this.logger.log(
-        `Onboarding email sent to ${userEmail}: ${info.messageId}`,
-      );
-      return true;
-    } catch (error) {
-      this.logger.error(
-        `Failed to send onboarding email to ${userEmail}:`,
-        error,
-      );
-      return false;
-    }
-  }
-
-  /**
-   * Send a password reset email to a user
-   * @param userEmail The email of the user
-   * @param resetToken The token for password reset
-   */
-  async sendResetPasswordEmail(
-    userEmail: string,
-    resetToken: string,
-    resetMethod: string,
-  ): Promise<boolean> {
-    try {
-      const appUrl = this.configService.get<string>(
-        'APP_URL',
-        'http://localhost:3000',
-      );
-      const resetLink = `${appUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(userEmail)}&resetMethod=${resetMethod}`;
-
-      const mailOptions = {
-        from: `"${this.configService.get<string>('EMAIL_FROM_NAME', 'System Admin')}" <${this.configService.get<string>('EMAIL_FROM')}>`,
-        to: userEmail,
-        subject: 'Reset Your RingHD Password',
-        html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Password Reset Request</h2>
-          <p>We received a request to reset your password for your RingHD account.</p>
-          
-          <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p><strong>Email:</strong> ${userEmail}</p>
-          </div>
-          
-          <p>To set a new password, please click the button below:</p>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-              Reset Password
-            </a>
-          </div>
-          
-          <p>If the button doesn't work, you can copy and paste the following link into your browser:</p>
-          <p><a href="${resetLink}">${resetLink}</a></p>
-          
-          <p>This link will expire in 24 hours for security reasons.</p>
-          
-          <p>If you did not request a password reset, please ignore this email or contact our support team immediately as your account may be at risk.</p>
-          
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #777; font-size: 12px;">
-            <p>This is an automated email. Please do not reply to this message.</p>
-          </div>
-        </div>
-      `,
-      };
-
-      const info = await this.transporter.sendMail(mailOptions);
-      this.logger.log(
-        `Password reset email sent to ${userEmail}: ${info.messageId}`,
-      );
-      return true;
-    } catch (error) {
-      this.logger.error(
-        `Failed to send password reset email to ${userEmail}:`,
-        error,
-      );
-      return false;
-    }
-  }
-
   async sendBookingDetails(tripData: ITrip, bookingData: IBooking) {
-    console.log(tripData)
-    console.log(bookingData)
+    // console.log(tripData)
+    // console.log(bookingData)
     try {
       // Format dates
       const startDate = new Date(tripData?.start_date).toLocaleDateString();
       const startTime = new Date(tripData?.start_date).toLocaleTimeString();
-
+  
       // Create booking reference ID (using booking_id or a combination of IDs)
-      const bookingReference =  bookingData.booking_id ? `${bookingData.booking_id?.toString()?.padStart(6, '0')}` : "BK123";
-
+      const bookingReference = bookingData.booking_id ? `${bookingData.booking_id?.toString()?.padStart(6, '0')}` : "BK123";
+  
       // Format card number to show only last 4 digits
       const maskedCardNumber = bookingData.card_number
         ? `**** **** **** ${bookingData.card_number.slice(-4)}`
         : 'N/A';
-
+  
       // Format seats as comma-separated list
       const seatsFormatted = bookingData.seats.join(', ');
-
+  
+      // Create the edit booking URL with query parameters (including trip_id)
+      const editBookingUrl = `http://localhost:5173/edit-booking?booking_id=${bookingData.booking_id}&nic=${bookingData.nic}&trip_id=${tripData._id}`;
+  
       // Create email content
       const mailOptions = {
         from: this.configService.get<string>('EMAIL_USER'),
@@ -226,6 +94,21 @@ export class EmailService {
                 background-color: #f9f9f9;
                 padding: 15px;
                 border-left: 3px solid #4A90E2;
+                margin: 20px 0;
+              }
+              .action-button {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #4A90E2;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin-top: 15px;
+                font-weight: bold;
+                text-align: center;
+              }
+              .button-container {
+                text-align: center;
                 margin: 20px 0;
               }
             </style>
@@ -326,6 +209,10 @@ export class EmailService {
                   : ''
               }
               
+              <div class="button-container">
+                <a href="${editBookingUrl}" class="action-button">Edit Your Booking</a>
+              </div>
+              
               <p>Please arrive at least 30 minutes before departure. Keep this email as your booking confirmation.</p>
               
               <p>If you have any questions or need to make changes to your booking, please contact our customer service at <a href="mailto:support@example.com">support@example.com</a> or call us at +1-234-567-8900.</p>
@@ -343,7 +230,7 @@ export class EmailService {
           </html>
         `,
       };
-
+  
       // Send email
       const info = await this.transporter.sendMail(mailOptions);
       this.logger.log(
@@ -362,7 +249,7 @@ export class EmailService {
   async sendCancelEmail(bookingData: IBooking) {
     try {
       const subject = 'Booking Cancellation Confirmation';
-      
+
       const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -464,11 +351,15 @@ export class EmailService {
                   <span class="booking-label">Seat Number(s):</span> ${bookingData.seats.join(', ')}
                 </div>
                 
-                ${bookingData.total_amount ? `
+                ${
+                  bookingData.total_amount
+                    ? `
                   <div class="booking-item">
                     <span class="booking-label">Amount Paid:</span> ${bookingData.total_amount}
                   </div>
-                ` : ''}
+                `
+                    : ''
+                }
               </div>
               
               <p><strong>Refund Information:</strong></p>
@@ -492,7 +383,7 @@ export class EmailService {
         </body>
         </html>
       `;
-      
+
       // Create mail options
       const mailOptions = {
         from: this.configService.get<string>('EMAIL_USER'),
@@ -500,18 +391,18 @@ export class EmailService {
         subject: subject,
         html: htmlContent,
       };
-      
+
       // Send the email
       const info = await this.transporter.sendMail(mailOptions);
-      
+
       this.logger.log(
-        `Cancellation email sent to ${bookingData.email} for booking ${bookingData.booking_id}: ${info.messageId}`
+        `Cancellation email sent to ${bookingData.email} for booking ${bookingData.booking_id}: ${info.messageId}`,
       );
       return true;
     } catch (error) {
       this.logger.error(
         `Failed to send cancellation email: ${error.message}`,
-        error.stack
+        error.stack,
       );
       return false;
     }

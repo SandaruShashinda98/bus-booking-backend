@@ -1,7 +1,7 @@
 import { BaseEntitySchemaContent } from '@common/schemas/base-entity.model';
 import { DB_COLLECTION_NAMES } from '@constant/common/db-collection-names';
 import { IBooking } from '@interface/booking/booking';
-import { Document, model, Schema } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose';
 
 export type IBookingModel = IBooking & Document;
 
@@ -42,6 +42,12 @@ const BookingSchema = new Schema<IBookingModel>({
   },
   special_instruction: {
     type: String,
+  },
+  total_ticket_price: {
+    type: Schema.Types.Mixed,
+  },
+  total_meal_price: {
+    type: Schema.Types.Mixed,
   },
 
   // Payment details

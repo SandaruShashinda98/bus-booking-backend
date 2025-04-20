@@ -11,7 +11,8 @@ export const DatabaseConfig = MongooseModule.forRootAsync({
     const port = configService.get(MONGO_CONFIG_KEYS.MONGODB_PORT);
     const database = configService.get(MONGO_CONFIG_KEYS.MONGODB_DATABASE);
 
-    const uri = `mongodb+srv://sandaru:sandaru123@cluster0.ypqcaej.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+    // const uri = `mongodb+srv://sandaru:sandaru123@cluster0.ypqcaej.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+    const uri = `mongodb+srv://shathurthikasree:FecnFFcfw3hI00rJ@busbuddy.zwgrndh.mongodb.net/?retryWrites=true&w=majority&appName=BusBuddy`;
 
     return {
       uri,

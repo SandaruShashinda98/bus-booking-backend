@@ -48,7 +48,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get all users with filters and pagination' })
   @ApiResponse({ type: FilterUserResponseDTO })
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
   @Get()
   async filterUsers(@Query() queryParams: FilterUsersDto) {
     const filters = this.usersService.getUserFilters(queryParams);

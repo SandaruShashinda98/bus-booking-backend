@@ -41,7 +41,7 @@ export class TripController {
     @Query() queryParams: any,
     @LoggedUser() loggedUser: ILoggedUser,
   ) {
-    console.log(loggedUser.user_role);
+    // console.log(loggedUser.user_role);
 
     let foundTrips;
 
@@ -181,36 +181,115 @@ export class TripController {
     @Param() pathParams: ObjectIDPathDTO,
     @Body() updateTripDto: any,
   ) {
+    // console.log('updateTripDto', updateTripDto);
     const foundTrip = await this.tripService.findById(pathParams.id);
 
+    // Extract existing booked seats
+    const existingBookedSeats = Array.isArray(foundTrip?.booked_seats)
+      ? foundTrip.booked_seats
+      : [];
+
+    // Extract new booked seats
+    const newBookedSeats = Array.isArray(updateTripDto?.booked_seats)
+      ? updateTripDto.booked_seats
+      : [];
+
+    // If we have an existing NIC in updateTripDto, remove all seats for that NIC
+    // This handles the edit booking scenario
+    let filteredExistingSeats = existingBookedSeats;
+    if (updateTripDto?.nic) {
+      filteredExistingSeats = existingBookedSeats.filter(
+        (seat) => seat.nic !== updateTripDto.nic,
+      );
+    }
+
+    // Create a set of seat numbers to handle duplicates
+    const seatNumbersSet = new Set();
+
+    // Create final booked seats array without duplicates
+    const mergedBookedSeats = [];
+
+    // First add filtered existing seats
+    for (const seat of filteredExistingSeats) {
+      if (!seatNumbersSet.has(seat?.seat_number)) {
+        seatNumbersSet.add(seat?.seat_number);
+        mergedBookedSeats.push(seat);
+      }
+    }
+
+    // Then add new seats, avoiding duplicates
+    for (const seat of newBookedSeats) {
+      if (!seatNumbersSet.has(seat?.seat_number)) {
+        seatNumbersSet.add(seat?.seat_number);
+        mergedBookedSeats.push(seat);
+      }
+    }
+
+    // Update trip with merged booked seats
     const updatedTrip = await this.tripService.updateDocument({
       ...foundTrip,
       ...updateTripDto,
-      booked_seats: [
-        ...(Array.isArray(foundTrip?.booked_seats)
-          ? foundTrip.booked_seats
-          : []),
-        ...(Array.isArray(updateTripDto?.booked_seats)
-          ? updateTripDto.booked_seats
-          : []),
-      ],
+      booked_seats: mergedBookedSeats,
     });
 
     if (!updatedTrip)
       throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
 
-    // Update the booking with the new booked seats
-    const updatedBooking = await this.bookingService.addNewDocument({
-      ...updateTripDto,
-      trip_id: foundTrip._id,
-      booking_id: generateBookingID(),
-      seats: updateTripDto.selected_seats,
-    });
+    // Special handling for booking creation
+    // Only create a new booking document if this is a new booking, not an edit
+    let bookingId = null;
 
-    if (!updatedBooking)
-      throw new InternalServerErrorException([RESPONSE_MESSAGES.DB_FAILURE]);
+    // If there are selected seats and this is a new booking (not an edit)
+    if (
+      (updateTripDto.selected_seats &&
+        updateTripDto.selected_seats?.length > 0) ||
+      (updateTripDto.booked_seats && updateTripDto.booked_seats?.length)
+    ) {
+      // Check if this is a new booking or an edit
+      const isNewBooking = !updateTripDto.booking_id;
 
-    return { data: { ...updatedTrip, booking_id: updatedBooking._id } };
+      if (isNewBooking) {
+        // Create a new booking document
+        const updatedBooking = await this.bookingService.addNewDocument({
+          ...updateTripDto,
+          trip_id: foundTrip._id,
+          booking_id: generateBookingID(),
+          seats: updateTripDto.selected_seats,
+        });
+
+        if (!updatedBooking)
+          throw new InternalServerErrorException([
+            RESPONSE_MESSAGES.DB_FAILURE,
+          ]);
+
+        bookingId = updatedBooking._id;
+      } else {
+        const foundBooking = await this.bookingService.findDocument({
+          booking_id: updateTripDto.booking_id,
+        });
+        // If this is an edit, update the existing booking
+        const updatedBooking = await this.bookingService.updateDocument({
+          ...foundBooking,
+          ...updateTripDto,
+          trip_id: foundTrip._id,
+          seats: updateTripDto.selected_seats,
+        });
+
+        if (!updatedBooking)
+          throw new InternalServerErrorException([
+            RESPONSE_MESSAGES.DB_FAILURE,
+          ]);
+
+        bookingId = updatedBooking._id;
+      }
+    }
+
+    return {
+      data: {
+        ...updatedTrip,
+        booking_id: bookingId || updateTripDto.booking_id,
+      },
+    };
   }
 
   @ApiOperation({ summary: 'Update trip' })

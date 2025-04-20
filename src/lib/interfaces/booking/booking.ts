@@ -13,6 +13,8 @@ export interface IBooking extends IBaseEntity {
   email: string;
   guardian_contact: string;
   special_instruction: string;
+  total_ticket_price?: any;
+  total_meal_price?: any;
 
   //payment
   card_number?: string;

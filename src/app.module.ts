@@ -32,9 +32,9 @@ import { RestaurantModule } from '@module/restaurant/restaurant.module';
     AuthModule,
     //--------------------------------------------------
 
-    SettingsModule,
-    ReferenceModule,
-    UploadModule,
+    // SettingsModule,
+    // ReferenceModule,
+    // UploadModule,
     BusManagementModule,
     RestaurantModule
   ],
