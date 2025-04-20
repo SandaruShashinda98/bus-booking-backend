@@ -83,7 +83,6 @@ export class TripController {
       if (query.date) {
         // Convert the date string to a Date object
         const queryDate = new Date(query.date);
-        console.log('Query date parsed as:', queryDate);
         
         // Set the time to 00:00:00 for the start of the day
         const startOfDay = new Date(queryDate);
@@ -106,9 +105,6 @@ export class TripController {
             const morningEnd = new Date(queryDate);
             morningEnd.setHours(12, 0, 0, 0);
             
-            console.log('Morning start:', morningStart);
-            console.log('Morning end:', morningEnd);
-            
             filter.start_date = {
               $gte: morningStart,
               $lt: morningEnd,
@@ -120,9 +116,6 @@ export class TripController {
             
             const nightEnd = new Date(queryDate);
             nightEnd.setHours(6, 0, 0, 0);
-            
-            console.log('Night start:', nightStart);
-            console.log('Night end:', nightEnd);
             
             filter.start_date = {
               $gte: nightStart,
@@ -137,8 +130,6 @@ export class TripController {
           };
         }
       }
-      
-      console.log('Final filter:', JSON.stringify(filter));
       return filter;
     };
     
