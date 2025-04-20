@@ -70,41 +70,45 @@ export class TripController {
   })
   @Get('public')
   async filterPublicTrips(@Query() queryParams: any) {
+    console.log(queryParams);
+    
     const createTripFilter = (query) => {
       const filter: any = {};
-
-      if (query.from)
-        filter.start_location = { $regex: new RegExp(query.from, 'i') };
-
+      
+      // Basic location filters
+      if (query.from) filter.start_location = { $regex: new RegExp(query.from, 'i') };
       if (query.to) filter.destination = { $regex: new RegExp(query.to, 'i') };
-
+      
+      // Date filtering with logging for debugging
       if (query.date) {
         // Convert the date string to a Date object
         const queryDate = new Date(query.date);
-
+        console.log('Query date parsed as:', queryDate);
+        
         // Set the time to 00:00:00 for the start of the day
         const startOfDay = new Date(queryDate);
         startOfDay.setHours(0, 0, 0, 0);
-
+        
         // Set the time to 23:59:59 for the end of the day
         const endOfDay = new Date(queryDate);
         endOfDay.setHours(23, 59, 59, 999);
-
-        filter.start_date = {
-          $gte: startOfDay,
-          $lte: endOfDay,
-        };
-
-        // Handle time preference filtering
+        
+        console.log('Start of day:', startOfDay);
+        console.log('End of day:', endOfDay);
+        
+        // Time preference filtering
         if (query.timePreference) {
           if (query.timePreference === 'morning') {
             // Morning: 6AM - 12PM
             const morningStart = new Date(queryDate);
             morningStart.setHours(6, 0, 0, 0);
-
+            
             const morningEnd = new Date(queryDate);
             morningEnd.setHours(12, 0, 0, 0);
-
+            
+            console.log('Morning start:', morningStart);
+            console.log('Morning end:', morningEnd);
+            
             filter.start_date = {
               $gte: morningStart,
               $lt: morningEnd,
@@ -113,29 +117,38 @@ export class TripController {
             // Night: 12AM - 6AM
             const nightStart = new Date(queryDate);
             nightStart.setHours(0, 0, 0, 0);
-
+            
             const nightEnd = new Date(queryDate);
             nightEnd.setHours(6, 0, 0, 0);
-
+            
+            console.log('Night start:', nightStart);
+            console.log('Night end:', nightEnd);
+            
             filter.start_date = {
               $gte: nightStart,
               $lt: nightEnd,
             };
           }
+        } else {
+          // No time preference, use the whole day
+          filter.start_date = {
+            $gte: startOfDay,
+            $lte: endOfDay,
+          };
         }
       }
-
+      
+      console.log('Final filter:', JSON.stringify(filter));
       return filter;
     };
-
+    
     const filter = createTripFilter(queryParams);
-
     const foundTrips = await this.tripService.filterTripsWith(
       filter,
       queryParams.start || 0,
       queryParams.size || 0,
     );
-
+    
     return foundTrips;
   }
 
@@ -197,11 +210,11 @@ export class TripController {
     // If we have an existing NIC in updateTripDto, remove all seats for that NIC
     // This handles the edit booking scenario
     let filteredExistingSeats = existingBookedSeats;
-    if (updateTripDto?.nic) {
-      filteredExistingSeats = existingBookedSeats.filter(
-        (seat) => seat.nic !== updateTripDto.nic,
-      );
-    }
+    // if (updateTripDto?.nic) {
+    //   filteredExistingSeats = existingBookedSeats.filter(
+    //     (seat) => seat.nic !== updateTripDto.nic,
+    //   );
+    // }
 
     // Create a set of seat numbers to handle duplicates
     const seatNumbersSet = new Set();

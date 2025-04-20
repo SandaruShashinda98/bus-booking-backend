@@ -38,8 +38,8 @@ export class BookingController {
   @ApiOperation({
     summary: 'Get all bookings with filters and pagination',
   })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard, PermissionGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Get()
   async filterBookings(@Query() queryParams: any) {
     const foundBookings =
@@ -55,8 +55,8 @@ export class BookingController {
   @ApiOperation({
     summary: 'Get bookings by trip id',
   })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard, PermissionGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Get('trip/:tripId')
   async getBookingsByTripId(@Param('tripId') tripId: string) {
     if (!Types.ObjectId.isValid(tripId)) {
@@ -73,8 +73,8 @@ export class BookingController {
   @ApiOperation({
     summary: 'Get single booking by id',
   })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard, PermissionGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Get(':id')
   async getSingleBooking(@Param() pathParams: ObjectIDPathDTO) {
     const foundBooking = await this.bookingService.findById(pathParams.id);
@@ -88,8 +88,8 @@ export class BookingController {
   @ApiOperation({
     summary: 'Get booking by booking id',
   })
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permissions(PERMISSIONS.ADMIN)
+  // @UseGuards(JwtAuthGuard, PermissionGuard)
+  // @Permissions(PERMISSIONS.ADMIN)
   @Get('booking-id/:bookingId')
   async getBookingByBookingId(@Param('bookingId') bookingId: number) {
     const foundBooking = await this.bookingService.findDocument({
