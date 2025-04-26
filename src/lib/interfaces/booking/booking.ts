@@ -37,6 +37,7 @@ export interface IBus extends IBaseEntity {
 export interface IBusStaff extends IBaseEntity {
   staff_id: string;
   staff_name?: string;
+  staff_username?: string;
   role?: string;
   contact_number?: string;
   assigned_trip?: string;
@@ -54,7 +55,9 @@ export interface ITrip extends IBaseEntity {
   bus_number?: string;
   booked_seats?: any[];
 
-  driver_conductor_name?: string;
+  driver?: string;
+  conductor?: string;
+
   washroom_stops?:any;
   facilities?:string;
   bus_type?:string;

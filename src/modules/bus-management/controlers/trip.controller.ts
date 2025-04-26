@@ -66,45 +66,79 @@ export class TripController {
   }
 
   @ApiOperation({
+    summary: 'Get all assigned trips with filters and pagination',
+  })
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permissions(PERMISSIONS.ADMIN, PERMISSIONS.SUPPORT, PERMISSIONS.AGENT)
+  @Get('assigned')
+  async filterAssignedTrips(
+    @Query() queryParams: any,
+    @LoggedUser() loggedUser: ILoggedUser,
+  ) {
+    console.log(loggedUser);
+
+    let foundTrips = {};
+
+    if (loggedUser.user_role === 'CONDUCTOR') {
+      foundTrips = await this.tripService.filterDocumentsWithPagination(
+        { conductor: loggedUser.username },
+        queryParams.start || 0,
+        queryParams.size || 0,
+      );
+    }
+
+    if (loggedUser.user_role === 'DRIVER') {
+      foundTrips = await this.tripService.filterDocumentsWithPagination(
+        { driver: loggedUser.username },
+        queryParams.start || 0,
+        queryParams.size || 0,
+      );
+    }
+
+    return foundTrips;
+  }
+
+  @ApiOperation({
     summary: 'Get all trips with public',
   })
   @Get('public')
   async filterPublicTrips(@Query() queryParams: any) {
     console.log(queryParams);
-    
+
     const createTripFilter = (query) => {
       const filter: any = {};
-      
+
       // Basic location filters
-      if (query.from) filter.start_location = { $regex: new RegExp(query.from, 'i') };
+      if (query.from)
+        filter.start_location = { $regex: new RegExp(query.from, 'i') };
       if (query.to) filter.destination = { $regex: new RegExp(query.to, 'i') };
-      
+
       // Date filtering with logging for debugging
       if (query.date) {
         // Convert the date string to a Date object
         const queryDate = new Date(query.date);
-        
+
         // Set the time to 00:00:00 for the start of the day
         const startOfDay = new Date(queryDate);
         startOfDay.setHours(0, 0, 0, 0);
-        
+
         // Set the time to 23:59:59 for the end of the day
         const endOfDay = new Date(queryDate);
         endOfDay.setHours(23, 59, 59, 999);
-        
+
         console.log('Start of day:', startOfDay);
         console.log('End of day:', endOfDay);
-        
+
         // Time preference filtering
         if (query.timePreference) {
           if (query.timePreference === 'morning') {
             // Morning: 6AM - 12PM
             const morningStart = new Date(queryDate);
             morningStart.setHours(6, 0, 0, 0);
-            
+
             const morningEnd = new Date(queryDate);
             morningEnd.setHours(12, 0, 0, 0);
-            
+
             filter.start_date = {
               $gte: morningStart,
               $lt: morningEnd,
@@ -113,10 +147,10 @@ export class TripController {
             // Night: 12AM - 6AM
             const nightStart = new Date(queryDate);
             nightStart.setHours(0, 0, 0, 0);
-            
+
             const nightEnd = new Date(queryDate);
             nightEnd.setHours(6, 0, 0, 0);
-            
+
             filter.start_date = {
               $gte: nightStart,
               $lt: nightEnd,
@@ -132,14 +166,14 @@ export class TripController {
       }
       return filter;
     };
-    
+
     const filter = createTripFilter(queryParams);
     const foundTrips = await this.tripService.filterTripsWith(
       filter,
       queryParams.start || 0,
       queryParams.size || 0,
     );
-    
+
     return foundTrips;
   }
 

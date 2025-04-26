@@ -14,6 +14,9 @@ const BusStaffSchema = new Schema<IBusStaffModel>({
   staff_name: {
     type: String,
   },
+  staff_username: {
+    type: String,
+  },
   role: {
     type: String,
   },

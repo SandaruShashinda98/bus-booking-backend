@@ -32,9 +32,13 @@ const TripSchema = new Schema<ITripModel>({
     type: Schema.Types.Mixed,
   },
 
-  driver_conductor_name: {
+  driver: {
     type: Schema.Types.Mixed,
   },
+  conductor: {
+    type: Schema.Types.Mixed,
+  },
+
   washroom_stops: {
     type: Schema.Types.Mixed,
   },
