@@ -246,7 +246,7 @@ export class EmailService {
     }
   }
 
-  async sendCancelEmail(bookingData: IBooking) {
+  async sendCancelEmail(bookingData: IBooking, seat_number:number) {
     try {
       const subject = 'Booking Cancellation Confirmation';
 
@@ -348,7 +348,7 @@ export class EmailService {
                 </div>
                 
                 <div class="booking-item">
-                  <span class="booking-label">Seat Number(s):</span> ${bookingData.seats.join(', ')}
+                  <span class="booking-label">Seat Number(s):</span> ${seat_number.toString()}
                 </div>
                 
                 ${

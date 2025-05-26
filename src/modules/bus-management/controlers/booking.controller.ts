@@ -159,7 +159,12 @@ export class BookingController {
   @ApiOperation({ summary: 'Cancel booking' })
   @Patch('cancel')
   async cancelBooking(@Body() updateBookingDto: any) {
-    if (!updateBookingDto.booking_id || !updateBookingDto.nic)
+    console.log('updateBookingDto', updateBookingDto);
+    if (
+      !updateBookingDto.booking_id ||
+      !updateBookingDto.nic ||
+      !updateBookingDto.seat_number
+    )
       throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
 
     const foundBooking = await this.bookingService.findDocument({
@@ -172,18 +177,27 @@ export class BookingController {
     if (foundBooking.nic !== updateBookingDto.nic)
       throw new NotFoundException([RESPONSE_MESSAGES.DATA_NOT_FOUND]);
 
-    const deletedBooking = await this.bookingService.hardDelete(
-      foundBooking._id,
+    // const deletedBooking = await this.bookingService.hardDelete(
+    //   foundBooking._id,
+    // );
+
+    const removeSeat = await this.tripService.deleteSeatFromTrip(
+      foundBooking.trip_id.toString(),
+      updateBookingDto.seat_number,
+      updateBookingDto.nic,
     );
 
-    if (!deletedBooking)
+    if (!removeSeat)
       throw new NotFoundException([RESPONSE_MESSAGES.DB_FAILURE]);
 
     // cancel email
-    await this.emailService.sendCancelEmail(foundBooking)
+    await this.emailService.sendCancelEmail(
+      foundBooking,
+      updateBookingDto.seat_number,
+    );
 
     return {
-      data: deletedBooking,
+      data: removeSeat,
     };
   }
 

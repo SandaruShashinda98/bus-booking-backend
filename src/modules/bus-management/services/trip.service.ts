@@ -97,4 +97,34 @@ export class TripService extends CommonDatabaseService<ITrip> {
       count: result[0].count || 0,
     };
   }
+
+
+  async deleteSeatFromTrip(tripId: string, seatNumber: number, nic: string): Promise<any> {
+    try {
+      // Update the trip document by pulling the seat with matching seat_number and nic
+      const updatedTrip = await this.tripModel.findByIdAndUpdate(
+        tripId,
+        {
+          $pull: {
+            booked_seats: {
+              seat_number: Number(seatNumber),
+              nic: nic,
+            },
+          },
+        },
+        { new: true }, // Return the updated document
+      );
+
+      if (!updatedTrip) {
+        throw new Error('Trip not found');
+      }
+
+      return {
+        message: 'Seat deleted successfully',
+        trip: updatedTrip,
+      };
+    } catch (error) {
+      throw new Error(`Failed to delete seat: ${error.message}`);
+    }
+  }
 }
